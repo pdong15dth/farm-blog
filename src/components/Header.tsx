@@ -3,8 +3,8 @@ export default function Header() {
     <div className="container">
       <div className="navbar-brand">
         <a href="index.html"><img
-          src="https://www.wrraptheme.com/templates/lucid/html/assets/images/logo.svg"
-          alt="Lucid Logo" className="img-responsive logo" /></a>
+          src="https://www.svgrepo.com/show/223051/admin.svg"
+          alt="Lucid Logo" className="img-responsive logo" width={50} height={25}/></a>
       </div>
 
       <div className="navbar-right">

@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from "@/src/services/basePrisma/BasePrisma";
 
 export default async function handle(req, res) {
     const body = JSON.parse(req.body)

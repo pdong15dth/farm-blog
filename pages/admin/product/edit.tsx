@@ -13,7 +13,7 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
 import { DocumentContext } from 'next/document'
-import { Post } from '@prisma/client'
+import { Post, Product } from '@prisma/client'
 import HeaderTitle from '@/src/components/HeaderTitle'
 import utils from '@/src/utils/constant'
 
@@ -36,13 +36,30 @@ export async function getServerSideProps(ctx: DocumentContext) {
 
 const EditNews = (props) => {
 
-  console.log(props.id)
   const [listNational, setListNational] = useState(props.nationals)
   const [listContries, setListContries] = useState(props.countries)
-  const [news, setNews] = useState<Post>(null)
+  const [news, setNews] = useState<Product>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [loadPageState, setLoadPageState] = useState(false)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
+
+  const [selectContries, setselectContries] = useState([])
+  const [selectNationals, setselectNationals] = useState([])
+
+  console.log(news?.country)
+
+  if (news?.country != null) {
+    JSON.parse(news?.country).forEach(element => {
+      selectContries.push(element)
+    });
+  }
+
+  if (news?.national != null) {
+    JSON.parse(news?.national).forEach(element => {
+      selectNationals.push(element)
+    });
+  }
+
 
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
@@ -53,7 +70,8 @@ const EditNews = (props) => {
   async function getPostById() {
     fetch(`/api/admin/product/getById?id=${props.id}`).then(response => response.json()).then(result => {
       setNews(result)
-      console.log("setNews", result)
+      setselectContries(selectContries)
+      setselectNationals(selectNationals)
     }).catch(error => {
     });
   }
@@ -66,6 +84,7 @@ const EditNews = (props) => {
     }
 
     getPostById()
+
   }, [])
 
 
@@ -131,7 +150,7 @@ const EditNews = (props) => {
     return <form id="basic-form" onSubmit={postFormDataNews}>
       <div className="form-group">
         <label>Tên Nông Sản</label>
-        <input type="text" value={news?.title} id='title' className="form-control" required />
+        <input type="text" defaultValue={news?.title} id='title' className="form-control" required />
       </div>
       <div className="form-group">
         <label>Chọn hình ảnh cho Nông Sản</label>
@@ -141,7 +160,7 @@ const EditNews = (props) => {
       </div>
       <div className="form-group">
         <label>Mô tả Nông Sản</label>
-        <textarea id='description' value={news?.description} className="form-control" rows={5} cols={30} required></textarea>
+        <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
       </div>
 
       <div className="form-group">
@@ -157,9 +176,10 @@ const EditNews = (props) => {
         </div>
         <br />
         {
-          listContries.map((item, index) => {
+          listContries?.map((item, index) => {
+            console.log("Dongo", selectContries.includes(item.id))
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id}  name="checkbox1" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" value={item.id} defaultChecked={selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
               <span>{item.countryName}</span>
             </label>
           })
@@ -174,9 +194,9 @@ const EditNews = (props) => {
         </div>
         <br />
         {
-          listNational.map((item, index) => {
+          listNational?.map((item, index) => {
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" defaultValue={item.id} defaultChecked={selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
               <span>{item.nationalName}</span>
             </label>
           })
@@ -223,7 +243,10 @@ const EditNews = (props) => {
       }
     </form>
   }
-  if (loadPageState)
+
+  if (!loadPageState)
+    return null
+  else
     return (
       <>
         <Head>

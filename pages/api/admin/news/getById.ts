@@ -1,11 +1,5 @@
-// pages/api/post/index.ts
+import prisma from "@/src/services/basePrisma/BasePrisma";
 
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-
-// POST /api/post
-// Required fields in body: title
-// Optional fields in body: content
 export default async function handle(req, res) {
 
     console.log(req.query.id)

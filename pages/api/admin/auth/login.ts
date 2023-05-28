@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from '@/src/services/basePrisma/BasePrisma';
 import CryptoJS from 'crypto-js'
 
-const prisma = new PrismaClient()
-// POST /api/get-accounts
 export default async function handle(req, res) {
     const body = JSON.parse(req.body)
     const { email, password } = body;

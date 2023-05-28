@@ -1,14 +1,6 @@
-// pages/api/post/index.ts
+import prisma from "@/src/services/basePrisma/BasePrisma";
 
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-
-// POST /api/post
-// Required fields in body: title
-// Optional fields in body: content
 export default async function handle(req, res) {
-
-    console.log(req.query.id)
     const result = await prisma.product.findUnique({
         where: {
             id: parseInt(req.query.id)
@@ -19,7 +11,6 @@ export default async function handle(req, res) {
             message: "Không tìm thấy bài viết"
         });
     });
-    console.log(result)
     res.json(result ?? {
         code: 404,
         message: "Không tìm thấy bài viết"

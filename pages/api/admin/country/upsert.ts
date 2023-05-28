@@ -1,7 +1,5 @@
+import prisma from '@/src/services/basePrisma/BasePrisma';
 import utils from '@/src/utils/constant'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
 
 export default async function handle(req, res) {
     const body = JSON.parse(req.body)

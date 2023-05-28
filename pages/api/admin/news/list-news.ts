@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-import CryptoJS from 'crypto-js'
+import prisma from '@/src/services/basePrisma/BasePrisma';
 
-const prisma = new PrismaClient()
 // POST /api/get-accounts
 export default async function handle(req, res) {
     const result = await prisma.post.findMany({

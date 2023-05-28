@@ -18,7 +18,7 @@ import HeaderTitle from '@/src/components/HeaderTitle'
 
 export async function getStaticProps() {
   const res = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
-
+  console.log(res)
   const results = await res.json()
   return {
     props: {

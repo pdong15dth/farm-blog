@@ -118,7 +118,7 @@ const EditNews = (props) => {
     return <form id="basic-form" onSubmit={postFormDataNews}>
       <div className="form-group">
         <label>Tiêu đề bài viết</label>
-        <input type="text" value={news?.title} id='title' className="form-control" required />
+        <input type="text" defaultValue={news?.title} id='title' className="form-control" required />
       </div>
       <div className="form-group">
         <label>Chọn hình ảnh cho bài viết</label>
@@ -128,7 +128,7 @@ const EditNews = (props) => {
       </div>
       <div className="form-group">
         <label>Mô tả bài viết</label>
-        <textarea id='description' value={news?.description} className="form-control" rows={5} cols={30} required></textarea>
+        <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
       </div>
 
       <div className="form-group">
