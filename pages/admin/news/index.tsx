@@ -165,7 +165,6 @@ const IndexNews = ({ posts }) => {
         <ScriptHeader />
       </>
     )
-
 }
 export default dynamic(() => Promise.resolve(IndexNews), { ssr: false })
 

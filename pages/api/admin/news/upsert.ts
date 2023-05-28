@@ -1,11 +1,6 @@
-// pages/api/post/index.ts
-
 import utils from '@/src/utils/constant'
 import { PrismaClient } from '@prisma/client'
 
-// POST /api/post
-// Required fields in body: title
-// Optional fields in body: content
 const prisma = new PrismaClient()
 
 export default async function handle(req, res) {

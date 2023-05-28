@@ -1,6 +1,6 @@
 
 export default function AdminSideNav() {
-  
+
   return <div className="main_menu">
     <nav className="navbar navbar-expand-lg">
       <div className="container">
@@ -75,11 +75,16 @@ export default function AdminSideNav() {
                 <span>Tin tức</span></a>
             </li>
             <li className="nav-item dropdown">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown"><i
+              <a href="/admin/country"
+                className="nav-link"><i
                   className="icon-pencil"></i>
-                <span>Liên hệ</span></a>
+                <span>Tỉnh / Thành Phố</span></a>
+            </li>
+            <li className="nav-item dropdown">
+              <a href="/admin/national"
+                className="nav-link"><i
+                  className="icon-pencil"></i>
+                <span>Quốc Gia</span></a>
             </li>
           </ul>
         </div>

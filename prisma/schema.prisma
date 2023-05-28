@@ -11,26 +11,62 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   name     String?
   password String?
   role     String?
   posts    Post[]
+  products Product[]
 }
 
 model Country {
-  id          Int     @id @default(autoincrement())
-  countryName String  @unique
-  slug        String?
-  posts       Post[]
+  id             Int             @id @default(autoincrement())
+  countryName    String          @unique
+  slug           String?
+  products       Product[]
+  finishProducts FinishProduct[]
 }
 
 model National {
-  id          Int     @id @default(autoincrement())
-  countryName String  @unique
-  slug        String?
-  posts       Post[]
+  id             Int             @id @default(autoincrement())
+  nationalName   String          @unique
+  slug           String?
+  products       Product[]
+  finishProducts FinishProduct[]
+}
+
+model Product {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  content      String?
+  slug         String?
+  slugOriginal String?
+  image        String?
+  published    Boolean    @default(false)
+  data         String?
+  author       User       @relation(fields: [authorId], references: [id])
+  authorId     Int
+  country      Country[]
+  national     National[]
+  createdAt    DateTime   @default(now())
+}
+
+model FinishProduct {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  content      String?
+  slug         String?
+  slugOriginal String?
+  image        String?
+  published    Boolean    @default(false)
+  data         String?
+  authorId     Int
+  country      Country[]
+  national     National[]
+  createdAt    DateTime   @default(now())
 }
 
 model Post {
@@ -44,10 +80,6 @@ model Post {
   published    Boolean   @default(false)
   author       User      @relation(fields: [authorId], references: [id])
   authorId     Int
-  country      Country   @relation(fields: [countryId], references: [id])
-  countryId    Int
-  national     National  @relation(fields: [nationalId], references: [id])
-  nationalId   Int
   createdAt    DateTime  @default(now())
   comments     Comment[]
 }
