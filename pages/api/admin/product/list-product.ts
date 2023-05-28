@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client'
+import CryptoJS from 'crypto-js'
 
 const prisma = new PrismaClient()
 // POST /api/get-accounts
 export default async function handle(req, res) {
-    const result = await prisma.national.findMany({
+    const result = await prisma.product.findMany({
         orderBy: {
-            nationalName: 'asc'
+            createdAt: 'desc'
         }
     });
     res.json(result);

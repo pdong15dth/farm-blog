@@ -13,11 +13,30 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
 import HeaderTitle from '@/src/components/HeaderTitle'
+import { DocumentContext } from 'next/document'
+import utils from '@/src/utils/constant'
 
-const inter = Inter({ subsets: ['latin'] })
+export async function getServerSideProps(ctx: DocumentContext) {
 
-const CreateNews = () => {
+  const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
+
+  const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
+
+  const nationals = await res1.json()
+  const countries = await res2.json()
+
+  return {
+    props: {
+      nationals: nationals,
+      countries: countries
+    }
+  };
+}
+
+const CreateNews = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [listNational, setListNational] = useState(props.nationals)
+  const [listContries, setListContries] = useState(props.countries)
   const [news, setNews] = useState<any>(null)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
   const [isLoading, setIsLoading] = useState(false)
@@ -37,8 +56,40 @@ const CreateNews = () => {
     event.preventDefault();
     try {
       var err = []
-      console.log("Dopngne")
 
+      let contriesId = []
+      for (let index = 0; index < event.target.checkbox1.length; index++) {
+        const element = event.target.checkbox1[index];
+        if (element.checked) {
+          contriesId.push(parseInt(element.value))
+        }
+      }
+
+      let nationalId = []
+      for (let index = 0; index < event.target.checkbox2.length; index++) {
+        const element = event.target.checkbox2[index];
+        if (element.checked) {
+          nationalId.push(parseInt(element.value))
+        }
+      }
+      let dataChart = JSON.stringify([
+        {
+          "2019": event.target.data1.value
+        },
+        {
+          "2020": event.target.data2.value
+        },
+        {
+          "2021": event.target.data3.value
+        },
+        {
+          "2022": event.target.data4.value
+        },
+        {
+          "2023": event.target.data5.value
+        },
+      ])
+      
       var formdata = new FormData();
       formdata.append(
         "image",
@@ -75,10 +126,13 @@ const CreateNews = () => {
         authorId: user.id,
         content: dataCkeditor,
         image: linkImage,
-        published: event.target.published.checked
+        published: event.target.published.checked,
+        countries: JSON.stringify(contriesId),
+        national: JSON.stringify(nationalId),
+        data: dataChart
       }
-      console.log(data)
-      fetch("/api/admin/news/upsert", {
+      console.log("debug 0")
+      fetch("/api/admin/product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
       }).then(response => response.json()).then(res => {
@@ -94,23 +148,82 @@ const CreateNews = () => {
 
     return <form id="basic-form" onSubmit={postFormDataNews}>
       <div className="form-group">
-        <label>Tiêu đề bài viết</label>
+        <label>Tên Nông Sản</label>
         <input type="text" id='title' className="form-control" required />
       </div>
       <div className="form-group">
-        <label>Chọn hình ảnh cho bài viết</label>
+        <label>Chọn hình ảnh cho Nông Sản</label>
         <div className="body" style={{ padding: 0 }}>
           <input type="file" id="img" className="dropify" />
         </div>
       </div>
       <div className="form-group">
-        <label>Mô tả bài viết</label>
-        <textarea id='description' className="form-control" rows={5} cols={30} required></textarea>
+        <label>Mô tả Nông Sản</label>
+        <textarea id='description' className="form-control" rows={5} cols={30} ></textarea>
       </div>
-
       <div className="form-group">
-        <label>Nội dung bài viết</label>
+        <label>Nội dung Nông Sản</label>
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
+      </div>
+      <div className="form-group">
+        <label>Tỉnh / TP</label>
+        <br />
+        <div className="col-lg-3" style={{ padding: 0 }}>
+          <input type="text" id='search' className="form-control" />
+        </div>
+        <br />
+        {
+          listContries.map((item, index) => {
+            return <label key={index} className="fancy-checkbox">
+              <input type="checkbox" value={item.id} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
+              <span>{item.countryName}</span>
+            </label>
+          })
+        }
+        <p id="error-checkbox"></p>
+      </div>
+      <div className="form-group">
+        <label>Tỉnh / TP</label>
+        <br />
+        <div className="col-lg-3" style={{ padding: 0 }}>
+          <input type="text" id='search' className="form-control" />
+        </div>
+        <br />
+        {
+          listNational.map((item, index) => {
+            return <label key={index} className="fancy-checkbox">
+              <input type="checkbox" value={item.id} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
+              <span>{item.nationalName}</span>
+            </label>
+          })
+        }
+        <p id="error-checkbox"></p>
+      </div>
+      <div className="form-group">
+        <label>Số liêu nông sản trong 5 năm</label>
+        <div className="row">
+          <div className="col">
+            <label>2019</label>
+            <input type="text" id='data1' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2020</label>
+            <input type="text" id='data2' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2021</label>
+            <input type="text" id='data3' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2022</label>
+            <input type="text" id='data4' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2023</label>
+            <input type="text" id='data5' className="form-control" required />
+          </div>
+
+        </div>
       </div>
       <div className="form-group">
         <div className="fancy-checkbox">
@@ -118,10 +231,11 @@ const CreateNews = () => {
         </div>
       </div>
       <br />
-      {isLoading ?
+      {/* {isLoading ?
         <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>
         :
-        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>}
+        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>} */}
+        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>
     </form>
   }
   return (
@@ -137,10 +251,14 @@ const CreateNews = () => {
 
         <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
+
       </Head>
+
       {/* <!-- VENDOR CSS --> */}
-      <CssHeader />
       <link rel="stylesheet" href="../../assets/vendor/dropify/css/dropify.min.css" />
+      <link rel="stylesheet" href="../../assets/vendor/bootstrap-multiselect/bootstrap-multiselect.css" />
+      <link rel="stylesheet" href="../../assets/vendor/parsleyjs/css/parsley.css" />
+      <CssHeader />
 
       {/* <!-- Page Loader --> */}
       {/* <div className="page-loader-wrapper">
@@ -161,7 +279,8 @@ const CreateNews = () => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Thêm bài viết tin tức" />
+            <HeaderTitle title="Thêm nông sản" />
+
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
@@ -180,7 +299,11 @@ const CreateNews = () => {
       {/* <!-- Javascript --> */}
       <ScriptHeader />
       <Script strategy="lazyOnload" src="../../assets/vendor/dropify/js/dropify.min.js"></Script>
+      {/* <!-- Multi Select Plugin Js --> */}
+      <Script strategy="lazyOnload" src="../../assets/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></Script>
+      <Script strategy="lazyOnload" src="../../assets/vendor/multi-select/js/jquery.multi-select.js"></Script>
       <Script strategy="lazyOnload" src="../../assets/js/pages/forms/dropify.js"></Script>
+      <Script strategy="lazyOnload" src="../../assets/js/pages/forms/advanced-form-elements.js"></Script>
     </>
   )
 

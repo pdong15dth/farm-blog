@@ -14,6 +14,7 @@ import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
 import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
+import HeaderTitle from '@/src/components/HeaderTitle'
 
 export async function getServerSideProps(ctx: DocumentContext) {
   console.log(ctx.query.id)
@@ -155,20 +156,7 @@ const EditCountry = (props) => {
 
         <div id="main-content">
           <div className="container">
-            <div className="block-header">
-              <div className="row">
-                <div className="col-lg-5 col-md-8 col-sm-12">
-                  <h2>Dashboard</h2>
-                  <ul className="breadcrumb">
-                    <li className="breadcrumb-item"><a
-                      href="index.html"><i
-                        className="icon-home"></i></a></li>
-                    <li className="breadcrumb-item active">Dashboard
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <HeaderTitle title="Chỉnh sửa Tỉnh / TP" />
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">

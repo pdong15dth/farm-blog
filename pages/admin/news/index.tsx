@@ -13,6 +13,7 @@ import utils from '@/src/utils/constant'
 import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
+import HeaderTitle from '@/src/components/HeaderTitle'
 
 
 export async function getStaticProps() {
@@ -115,26 +116,13 @@ const IndexNews = ({ posts }) => {
 
           <div id="main-content">
             <div className="container">
-              <div className="block-header">
-                <div className="row">
-                  <div className="col-lg-5 col-md-8 col-sm-12">
-                    <h2>Dashboard</h2>
-                    <ul className="breadcrumb">
-                      <li className="breadcrumb-item"><a
-                        href="index.html"><i
-                          className="icon-home"></i></a></li>
-                      <li className="breadcrumb-item active">Dashboard
-                      </li>
-                    </ul>
-                  </div>
+              <HeaderTitle title="Danh sách bài viết tin tức" />
 
-                </div>
-              </div>
               <div className="row clearfix">
                 <div className="col-lg-12">
                   <div className="card">
                     <div className="header" style={{ float: 'right' }}>
-                      <a href="/admin/news/create" className="btn btn-outline-secondary">Tạo bài viết</a>
+                      <a href="/admin/news/create" className="btn btn-outline-secondary">Thêm bài viết</a>
                     </div>
 
                     <div className="body">

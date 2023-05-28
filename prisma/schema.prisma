@@ -11,62 +11,55 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
   name     String?
   password String?
   role     String?
   posts    Post[]
-  products Product[]
 }
 
 model Country {
-  id             Int             @id @default(autoincrement())
-  countryName    String          @unique
-  slug           String?
-  products       Product[]
-  finishProducts FinishProduct[]
+  id          Int     @id @default(autoincrement())
+  countryName String  @unique
+  slug        String?
 }
 
 model National {
-  id             Int             @id @default(autoincrement())
-  nationalName   String          @unique
-  slug           String?
-  products       Product[]
-  finishProducts FinishProduct[]
+  id           Int     @id @default(autoincrement())
+  nationalName String  @unique
+  slug         String?
 }
 
 model Product {
-  id           Int        @id @default(autoincrement())
-  title        String
-  description  String?
-  content      String?
-  slug         String?
-  slugOriginal String?
-  image        String?
-  published    Boolean    @default(false)
-  data         String?
-  author       User       @relation(fields: [authorId], references: [id])
-  authorId     Int
-  country      Country[]
-  national     National[]
-  createdAt    DateTime   @default(now())
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String?
+  content       String?
+  slug          String?
+  slugOriginal  String?
+  image         String?
+  country       String?
+  national      String?
+  published     Boolean         @default(false)
+  data          String?
+  createdAt     DateTime        @default(now())
+  FinishProduct FinishProduct[]
 }
 
 model FinishProduct {
-  id           Int        @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   title        String
   description  String?
   content      String?
   slug         String?
   slugOriginal String?
   image        String?
-  published    Boolean    @default(false)
+  published    Boolean  @default(false)
   data         String?
-  authorId     Int
-  country      Country[]
-  national     National[]
-  createdAt    DateTime   @default(now())
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    Int
+  createdAt    DateTime @default(now())
 }
 
 model Post {

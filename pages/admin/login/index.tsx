@@ -51,7 +51,7 @@ const Home = () => {
 
       console.log(data)
 
-      await fetch("/api/admin/create-account", {
+      await fetch("/api/admin/auth/create-account", {
         method: 'POST',
         body: data,
         redirect: 'follow'
@@ -78,7 +78,7 @@ const Home = () => {
         "password": event.target.password.value
       });
       console.log(data)
-      await fetch("/api/admin/login", {
+      await fetch("/api/admin/auth/login", {
         method: 'POST',
         body: data,
         redirect: 'follow'

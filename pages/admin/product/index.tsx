@@ -17,27 +17,18 @@ import HeaderTitle from '@/src/components/HeaderTitle'
 
 
 export async function getStaticProps() {
-  const res = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
+  const res = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
 
-  const countrys = await res.json()
+  const results = await res.json()
   return {
     props: {
-      countrys,
+      results,
     },
   }
 }
-const IndexCountry = ({ countrys }) => {
-  const [countrysData, setcountrysData] = useState(countrys)
+const IndexProducts = ({ results }) => {
+  const [products, setProducts] = useState(results)
   const [loadPageState, setLoadPageState] = useState(false)
-  const [slugTitle, setSlugTitle] = useState("")
-  const [error, setError] = useState("")
-
-  const reloadCountry = async () => {
-    const res = await fetch(`/api/admin/country/listCountry`)
-    const countrys = await res.json()
-    setcountrysData(countrys)
-  }
-
   useEffect(() => {
     setLoadPageState(true)
     const isAdmin = authService.checkAuthAdmin();
@@ -49,33 +40,38 @@ const IndexCountry = ({ countrys }) => {
   const removeItem = (id) => {
     console.log(id)
     var body = { id }
-    fetch(`${utils.baseURL}/api/admin/country/delete`, {
+    fetch(`${utils.baseURL}/api/admin/product/delete`, {
       method: "POST",
       body: JSON.stringify(body)
     }).then(response => response.json()).then(result => {
       console.log(result)
-      const newList = countrysData.filter((item) => item.id !== id);
-      setcountrysData(newList);
+      const newList = products.filter((item) => item.id !== id);
+      setProducts(newList);
     }).catch(error => console.log('error', error));
   }
-
-  const ListNews = () => {
-    if (countrysData == null) {
+  const ListProducts = () => {
+    if (products == null) {
       console.log("news null roi dmm")
       return
     }
 
-    return countrysData?.map((item, index) => {
+    return products?.map((item, index) => {
       return (
         <tr key={index}>
           <td>
-            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.countryName}</span>
+            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.title}</span>
           </td>
           <td>
-            <address><i className="zmdi zmdi-pin"></i>{item.slug}</address>
+            <img src={item.image} className="image description" width={100} alt="" />
           </td>
           <td>
-            <a href={`/admin/country/edit?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-edit" ></i></a>
+            <address><i className="zmdi zmdi-pin"></i>{item.description}</address>
+          </td>
+          <td>
+            <span className="badge badge-default m-l-10 hidden-sm-down">{item.published ? "Public" : "Review"}</span>
+          </td>
+          <td>
+            <a href={`/admin/product/edit?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-edit" ></i></a>
             &nbsp;
             <button type="button" data-type="confirm" className="btn btn-danger js-sweetalert" title="Delete" onClick={() => removeItem(item.id)}><i className="fa fa-trash-o"></i></button>
           </td>
@@ -83,76 +79,6 @@ const IndexCountry = ({ countrys }) => {
       )
     })
   }
-  const [isLoading, setIsLoading] = useState(false)
-
-  const postFormDataNews = async (event) => {
-    event.preventDefault();
-    try {
-      var err = []
-      console.log("Dopngne")
-
-      setIsLoading(true)
-      let user = authService.getUserInfor()
-
-      var data = {
-        countryName: event.target.countryName.value,
-      }
-      console.log(data)
-      fetch("/api/admin/country/upsert", {
-        method: "POST",
-        body: JSON.stringify(data)
-      }).then(response => response.json()).then(res => {
-        console.log(res)
-        setIsLoading(false)
-        if (res.code == 401) {
-          setError(res.message)
-          return
-        }
-        reloadCountry()
-        event.target.reset();
-        setSlugTitle("")
-      })
-    } catch (error) {
-    }
-  }
-  const FormCreateCountry = () => {
-
-    return <form id="basic-form" onSubmit={postFormDataNews}>
-      <div className="row">
-        <div className="col-lg-6">
-          <div className="form-group">
-            <label>Tiêu đề bài viết</label>
-            <input onChange={(event) => {
-              console.log(event.target.value)
-
-              setSlugTitle(utils.ChangeToSlug(event.target.value))
-            }} type="text" id='countryName' className="form-control" required />
-          </div>
-        </div>
-        <div className="col-lg-6">
-          <div className="form-group">
-            <label>Slug</label>
-            <input type="text" disabled id='slug' value={slugTitle} className="form-control" />
-          </div>
-        </div>
-      </div>
-      {
-        error != "" ?
-          <div className="form-group">
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          </div>
-          : <></>
-      }
-      <br />
-      {isLoading ?
-        <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>
-        :
-        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>}
-    </form>
-  }
-
   return (
     <>
       <Head>
@@ -189,17 +115,12 @@ const IndexCountry = ({ countrys }) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Thêm Tỉnh / TP" />
-
+            <HeaderTitle title="Nông Sản"/>
             <div className="row clearfix">
               <div className="col-lg-12">
-
                 <div className="card">
-                  <div className="header">
-                    <h2>Form</h2>
-                  </div>
-                  <div className="body">
-                    {FormCreateCountry()}
+                  <div className="header" style={{ float: 'right' }}>
+                    <a href="/admin/product/create" className="btn btn-outline-secondary">Thêm nông sản</a>
                   </div>
 
                   <div className="body">
@@ -208,12 +129,14 @@ const IndexCountry = ({ countrys }) => {
                         <thead>
                           <tr>
                             <th>Tiêu đề</th>
-                            <th>Slug</th>
+                            <th>Hình ảnh</th>
+                            <th>Mô tả</th>
+                            <th>Trạng thái</th>
                             <th>Hành động</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {ListNews()}
+                          {ListProducts()}
                         </tbody>
                       </table>
                     </div>
@@ -228,9 +151,8 @@ const IndexCountry = ({ countrys }) => {
       <ScriptHeader />
     </>
   )
-
 }
-export default dynamic(() => Promise.resolve(IndexCountry), { ssr: false })
+export default dynamic(() => Promise.resolve(IndexProducts), { ssr: false })
 
 // <Script strategy="afterInteractive" src="assets/js/vendors.min.js" async></Script>
 // <Script strategy="afterInteractive" src="assets/vendors/chartjs/Chart.min.js" async></Script>

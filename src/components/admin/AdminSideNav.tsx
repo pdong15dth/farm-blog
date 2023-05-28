@@ -15,9 +15,10 @@ export default function AdminSideNav() {
               </a>
             </li>
             <li className="nav-item dropdown mega-menu">
-              <a href="#"
+              <a href="/admin/product"
                 className="nav-link dropdown-toggle"
-                data-toggle="dropdown"><i
+                // data-toggle="dropdown"
+                ><i
                   className="icon-grid"></i>
                 <span>Nông sản</span></a>
               <div

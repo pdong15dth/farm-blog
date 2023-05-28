@@ -1,3 +1,5 @@
+import $ from "jquery"
+
 $(function() {
 
     Jknob();
@@ -59,3 +61,12 @@ function Jknob() {
         }
     });
 }
+
+
+function multiselect () {
+  // validation needs name of the element
+  $('#food').multiselect();
+
+  // initialize after multiselect
+  $('#basic-form').parsley();
+};
