@@ -16,6 +16,7 @@ import { DocumentContext } from 'next/document'
 import { Post, Product } from '@prisma/client'
 import HeaderTitle from '@/src/components/HeaderTitle'
 import utils from '@/src/utils/constant'
+import { Bar } from 'react-chartjs-2'
 import { VulnChart } from './VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
@@ -69,7 +70,6 @@ const EditNews = (props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [loadPageState, setLoadPageState] = useState(false)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
-
 
 
   let dataCkeditor = news?.content ?? "";
@@ -172,23 +172,22 @@ const EditNews = (props) => {
       }).then(response => response.json()).then(res => {
         console.log(res)
         setIsLoading(false)
-        //router.push("/admin/product");
+        router.push("/admin/product");
       })
     } catch (error) {
     }
   }
-  const [searchString, setSearchString] = useState("");
-
-  const handleSearchChange = (event) => {
-    event.preventDefault();
-    const searchString = event.target.value;
-    setSearchString(searchString);
-
-    const filteredArray = props.listNational.filter((item) =>
-      typeof item.nationalName === "string" &&
-      item.nationalName.toLowerCase().includes(searchString.toLowerCase())
-    );
-    setlistNational(filteredArray);
+  const labels = props.dataChart.map(obj => Object.keys(obj)[0]);
+  const values = props.dataChart.map(obj => Object.values(obj)[0]);
+  const dataSource = {
+    labels,
+    datasets: [
+      {
+        label: 'Sản Lượng',
+        data: values.map((item) => item),
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
+    ],
   };
 
   const FormCreatePost = () => {
@@ -320,10 +319,10 @@ const EditNews = (props) => {
 
               <div className="card">
                 <div className="header">
-                  <h2>Chart</h2>
+                  <h2>Review Chart</h2>
                 </div>
                 <div className="body">
-                  <VulnChart />
+                  {VulnChart(dataSource)}
                 </div>
               </div>
             </div>

@@ -28,7 +28,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: 'Xem trước biểu đồ báo cáo sản lượng trong 5 năm gần đây',
     },
   },
 };
@@ -39,13 +39,14 @@ export const data = {
   labels,
   datasets: [
     {
-      label: 'Dataset 2',
+      label: 'Sản Lượng',
       data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
   ],
 };
 
-export function VulnChart() {
-  return <Bar options={options} data={data} />;
+export function VulnChart(dataSource: Object) {
+  console.log(dataSource)
+  return <Bar options={options} data={dataSource} />;
 }

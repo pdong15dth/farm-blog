@@ -138,7 +138,7 @@ const CreateNews = (props) => {
       }).then(response => response.json()).then(res => {
         console.log(res)
         setIsLoading(false)
-        router.push("/admin/news");
+        router.push("/admin/product");
       })
     } catch (error) {
     }
