@@ -168,10 +168,6 @@ const CreateNews = (props) => {
       <div className="form-group">
         <label>Tỉnh / TP</label>
         <br />
-        <div className="col-lg-3" style={{ padding: 0 }}>
-          <input type="text" id='search' className="form-control" />
-        </div>
-        <br />
         {
           listContries.map((item, index) => {
             return <label key={index} className="fancy-checkbox">
@@ -183,11 +179,7 @@ const CreateNews = (props) => {
         <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
-        <label>Tỉnh / TP</label>
-        <br />
-        <div className="col-lg-3" style={{ padding: 0 }}>
-          <input type="text" id='search' className="form-control" />
-        </div>
+        <label>Quốc Gia</label>
         <br />
         {
           listNational.map((item, index) => {

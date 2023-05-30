@@ -16,37 +16,26 @@ import { DocumentContext } from 'next/document'
 import { Post, Product } from '@prisma/client'
 import HeaderTitle from '@/src/components/HeaderTitle'
 import utils from '@/src/utils/constant'
+import { VulnChart } from './VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
 
   const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
+  const res3 = await fetch(`${utils.baseURL}/api/admin/product/getById?id=${ctx.query.id}`)
 
   const nationals = await res1.json()
   const countries = await res2.json()
+  const news = await res3.json()
+  let selectContries = []
+  let selectNationals = []
+  let dataChart = []
 
-  return {
-    props: {
-      nationals: nationals,
-      countries: countries,
-      id: ctx.query.id
-    }
-  };
-}
-
-const EditNews = (props) => {
-
-  const [listNational, setListNational] = useState(props.nationals)
-  const [listContries, setListContries] = useState(props.countries)
-  const [news, setNews] = useState<Product>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [loadPageState, setLoadPageState] = useState(false)
-  const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
-
-  const [selectContries, setselectContries] = useState([])
-  const [selectNationals, setselectNationals] = useState([])
-
-  console.log(news?.country)
+  if (news?.data != null) {
+    JSON.parse(news?.data).forEach(element => {
+      dataChart.push(element)
+    });
+  }
 
   if (news?.country != null) {
     JSON.parse(news?.country).forEach(element => {
@@ -60,6 +49,28 @@ const EditNews = (props) => {
     });
   }
 
+  return {
+    props: {
+      news: news,
+      listNational: nationals,
+      listContries: countries,
+      selectContries: selectContries,
+      selectNationals: selectNationals,
+      dataChart: dataChart
+    }
+  };
+}
+
+const EditNews = (props) => {
+
+  const [news, setNews] = useState<Product>(props.news)
+  const [listNational, setlistNational] = useState(props.listNational)
+  const [listContries, setlistContries] = useState(props.listContries)
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadPageState, setLoadPageState] = useState(false)
+  const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
+
+
 
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
@@ -67,24 +78,12 @@ const EditNews = (props) => {
     console.log(dataTemplate)
   };
 
-  async function getPostById() {
-    fetch(`/api/admin/product/getById?id=${props.id}`).then(response => response.json()).then(result => {
-      setNews(result)
-      setselectContries(selectContries)
-      setselectNationals(selectNationals)
-    }).catch(error => {
-    });
-  }
-
   useEffect(() => {
     setLoadPageState(true)
     const isAdmin = authService.checkAuthAdmin();
     if (!isAdmin) {
       router.push("/admin/login");
     }
-
-    getPostById()
-
   }, [])
 
 
@@ -92,7 +91,38 @@ const EditNews = (props) => {
     event.preventDefault();
     try {
       var err = []
+      let contriesId = []
+      for (let index = 0; index < event.target.checkbox1.length; index++) {
+        const element = event.target.checkbox1[index];
+        if (element.checked) {
+          contriesId.push(parseInt(element.value))
+        }
+      }
 
+      let nationalId = []
+      for (let index = 0; index < event.target.checkbox2.length; index++) {
+        const element = event.target.checkbox2[index];
+        if (element.checked) {
+          nationalId.push(parseInt(element.value))
+        }
+      }
+      let dataChart = JSON.stringify([
+        {
+          "2019": event.target.data1.value
+        },
+        {
+          "2020": event.target.data2.value
+        },
+        {
+          "2021": event.target.data3.value
+        },
+        {
+          "2022": event.target.data4.value
+        },
+        {
+          "2023": event.target.data5.value
+        },
+      ])
       var formdata = new FormData();
       formdata.append(
         "image",
@@ -130,7 +160,10 @@ const EditNews = (props) => {
         authorId: user.id,
         content: dataCkeditor,
         image: linkImage,
-        published: event.target.published.checked
+        published: event.target.published.checked,
+        countries: JSON.stringify(contriesId),
+        national: JSON.stringify(nationalId),
+        data: dataChart
       }
       console.log(data)
       fetch("/api/admin/product/upsert", {
@@ -139,11 +172,24 @@ const EditNews = (props) => {
       }).then(response => response.json()).then(res => {
         console.log(res)
         setIsLoading(false)
-        router.push("/admin/product");
+        //router.push("/admin/product");
       })
     } catch (error) {
     }
   }
+  const [searchString, setSearchString] = useState("");
+
+  const handleSearchChange = (event) => {
+    event.preventDefault();
+    const searchString = event.target.value;
+    setSearchString(searchString);
+
+    const filteredArray = props.listNational.filter((item) =>
+      typeof item.nationalName === "string" &&
+      item.nationalName.toLowerCase().includes(searchString.toLowerCase())
+    );
+    setlistNational(filteredArray);
+  };
 
   const FormCreatePost = () => {
 
@@ -171,15 +217,10 @@ const EditNews = (props) => {
       <div className="form-group">
         <label>Tỉnh / TP</label>
         <br />
-        <div className="col-lg-3" style={{ padding: 0 }}>
-          <input type="text" id='search' className="form-control" />
-        </div>
-        <br />
         {
           listContries?.map((item, index) => {
-            console.log("Dongo", selectContries.includes(item.id))
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} defaultChecked={selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" value={item.id} defaultChecked={props?.selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
               <span>{item.countryName}</span>
             </label>
           })
@@ -187,16 +228,12 @@ const EditNews = (props) => {
         <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
-        <label>Tỉnh / TP</label>
-        <br />
-        <div className="col-lg-3" style={{ padding: 0 }}>
-          <input type="text" id='search' className="form-control" />
-        </div>
+        <label>Quốc Gia</label>
         <br />
         {
           listNational?.map((item, index) => {
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" defaultValue={item.id} defaultChecked={selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" defaultValue={item.id} defaultChecked={props?.selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
               <span>{item.nationalName}</span>
             </label>
           })
@@ -206,27 +243,14 @@ const EditNews = (props) => {
       <div className="form-group">
         <label>Số liêu nông sản trong 5 năm</label>
         <div className="row">
-          <div className="col">
-            <label>2019</label>
-            <input type="text" id='data1' className="form-control" required />
-          </div>
-          <div className="col">
-            <label>2020</label>
-            <input type="text" id='data2' className="form-control" required />
-          </div>
-          <div className="col">
-            <label>2021</label>
-            <input type="text" id='data3' className="form-control" required />
-          </div>
-          <div className="col">
-            <label>2022</label>
-            <input type="text" id='data4' className="form-control" required />
-          </div>
-          <div className="col">
-            <label>2023</label>
-            <input type="text" id='data5' className="form-control" required />
-          </div>
-
+          {
+            props.dataChart.map((item, index) => {
+              return <div key={index} className="col">
+                <label>{Object.entries(item)[0][0].toString()}</label>
+                <input type="text" id={`data${index + 1}`} defaultValue={Object.entries(item)[0][1].toString()} className="form-control" required />
+              </div>
+            })
+          }
         </div>
       </div>
       <div className="form-group">
@@ -244,29 +268,26 @@ const EditNews = (props) => {
     </form>
   }
 
-  if (!loadPageState)
-    return null
-  else
-    return (
-      <>
-        <Head>
-          <title>:: Lucid H :: Home</title>
-          <meta charSet="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-          <meta name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-          <meta name="description" content="Lucid Bootstrap 4.1.1 Admin Template" />
-          <meta name="author" content="WrapTheme, design by: ThemeMakker.com" />
+  return (
+    <>
+      <Head>
+        <title>:: Lucid H :: Home</title>
+        <meta charSet="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+        <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="description" content="Lucid Bootstrap 4.1.1 Admin Template" />
+        <meta name="author" content="WrapTheme, design by: ThemeMakker.com" />
 
-          <link rel="icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
-        </Head>
-        {/* <!-- VENDOR CSS --> */}
-        <CssHeader />
-        <link rel="stylesheet" href="../../assets/vendor/dropify/css/dropify.min.css" />
+      </Head>
+      {/* <!-- VENDOR CSS --> */}
+      <CssHeader />
+      <link rel="stylesheet" href="../../assets/vendor/dropify/css/dropify.min.css" />
 
-        {/* <!-- Page Loader --> */}
-        {/* <div className="page-loader-wrapper">
+      {/* <!-- Page Loader --> */}
+      {/* <div className="page-loader-wrapper">
         <div className="loader">
           <div className="m-t-30">
             <img
@@ -275,37 +296,47 @@ const EditNews = (props) => {
           <p>Please wait...</p>
         </div>
       </div> */}
-        {/* <!-- Overlay For Sidebars --> */}
+      {/* <!-- Overlay For Sidebars --> */}
 
-        <div id="wrapper">
-          <Header />
+      <div id="wrapper">
+        <Header />
 
-          <AdminSideNav />
+        <AdminSideNav />
 
-          <div id="main-content">
-            <div className="container">
-              <HeaderTitle title="Chỉnh sửa Nông Sản" />
-              <div className="row clearfix">
-                <div className="col-lg-12">
-                  <div className="card">
-                    <div className="header">
-                      <h2>Form</h2>
-                    </div>
-                    <div className="body">
-                      {FormCreatePost()}
-                    </div>
+        <div id="main-content">
+          <div className="container">
+            <HeaderTitle title="Chỉnh sửa Nông Sản" />
+            <div className="row clearfix">
+              <div className="col-lg-12">
+                <div className="card">
+                  <div className="header">
+                    <h2>Form</h2>
+                  </div>
+                  <div className="body">
+                    {FormCreatePost()}
                   </div>
                 </div>
               </div>
+
+              <div className="card">
+                <div className="header">
+                  <h2>Chart</h2>
+                </div>
+                <div className="body">
+                  <VulnChart />
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
-        {/* <!-- Javascript --> */}
-        <ScriptHeader />
-        <Script strategy="lazyOnload" src="../../assets/vendor/dropify/js/dropify.min.js"></Script>
-        <Script strategy="lazyOnload" src="../../assets/js/pages/forms/dropify.js"></Script>
-      </>
-    )
+      </div>
+      {/* <!-- Javascript --> */}
+      <ScriptHeader />
+      <Script strategy="lazyOnload" src="../../assets/vendor/dropify/js/dropify.min.js"></Script>
+      <Script strategy="lazyOnload" src="../../assets/js/pages/forms/dropify.js"></Script>
+    </>
+  )
 
 }
 export default dynamic(() => Promise.resolve(EditNews), { ssr: false })
