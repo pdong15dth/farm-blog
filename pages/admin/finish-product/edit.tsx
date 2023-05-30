@@ -23,7 +23,7 @@ export async function getServerSideProps(ctx: DocumentContext) {
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
 
   const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
-  const res3 = await fetch(`${utils.baseURL}/api/admin/product/getById?id=${ctx.query.id}`)
+  const res3 = await fetch(`${utils.baseURL}/api/admin/finish-product/getById?id=${ctx.query.id}`)
 
   const nationals = await res1.json()
   const countries = await res2.json()
@@ -62,7 +62,7 @@ export async function getServerSideProps(ctx: DocumentContext) {
   };
 }
 
-const EditNews = (props) => {
+const Edit = (props) => {
 
   const [news, setNews] = useState<Product>(props.news)
   const [listNational, setlistNational] = useState(props.listNational)
@@ -166,13 +166,13 @@ const EditNews = (props) => {
         data: dataChart
       }
       console.log(data)
-      fetch("/api/admin/product/upsert", {
+      fetch("/api/admin/finish-product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
       }).then(response => response.json()).then(res => {
         console.log(res)
         setIsLoading(false)
-        router.push("/admin/product");
+        router.push("/admin/finish-product");
       })
     } catch (error) {
     }
@@ -194,22 +194,22 @@ const EditNews = (props) => {
 
     return <form id="basic-form" onSubmit={postFormDataNews}>
       <div className="form-group">
-        <label>Tên Nông Sản</label>
+        <label>Tên sản phẩm thành phẩm</label>
         <input type="text" defaultValue={news?.title} id='title' className="form-control" required />
       </div>
       <div className="form-group">
-        <label>Chọn hình ảnh cho Nông Sản</label>
+        <label>Chọn hình ảnh cho sản phẩm thành phẩm</label>
         <div className="body" style={{ padding: 0 }}>
           <input type="file" id="img" data-default-file={news?.image} className="dropify" />
         </div>
       </div>
       <div className="form-group">
-        <label>Mô tả Nông Sản</label>
+        <label>Mô tả sản phẩm thành phẩm</label>
         <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
       </div>
 
       <div className="form-group">
-        <label>Nội dung Nông Sản</label>
+        <label>Nội dung sản phẩm thành phẩm</label>
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
 
@@ -240,7 +240,7 @@ const EditNews = (props) => {
         <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
-        <label>Số liêu nông sản trong 5 năm</label>
+        <label>Số liêu sản phẩm thành phẩm trong 5 năm</label>
         <div className="row">
           {
             props.dataChart.map((item, index) => {
@@ -304,7 +304,7 @@ const EditNews = (props) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Chỉnh sửa Nông Sản" />
+            <HeaderTitle title="Chỉnh sửa sản phẩm thành phẩm" />
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
@@ -338,7 +338,7 @@ const EditNews = (props) => {
   )
 
 }
-export default dynamic(() => Promise.resolve(EditNews), { ssr: false })
+export default dynamic(() => Promise.resolve(Edit), { ssr: false })
 
 // <Script strategy="afterInteractive" src="assets/js/vendors.min.js" async></Script>
 // <Script strategy="afterInteractive" src="assets/vendors/chartjs/Chart.min.js" async></Script>

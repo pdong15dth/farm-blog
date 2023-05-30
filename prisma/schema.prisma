@@ -57,6 +57,8 @@ model FinishProduct {
   image        String?
   published    Boolean  @default(false)
   data         String?
+  country      String?
+  national     String?
   product      Product  @relation(fields: [productId], references: [id])
   productId    Int
   createdAt    DateTime @default(now())

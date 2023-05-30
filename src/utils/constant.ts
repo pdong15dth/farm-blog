@@ -1,6 +1,6 @@
 class Utils {
   constructor() { }
-  baseURL: string = "http://localhost:3000";
+  baseURL: string = "http://192.168.1.2:3000";
   amoutList = [
     {
       id: 1,

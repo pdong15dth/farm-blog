@@ -17,17 +17,21 @@ import HeaderTitle from '@/src/components/HeaderTitle'
 
 
 export async function getStaticProps() {
-  const res = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
+  const res = await fetch(`${utils.baseURL}/api/admin/finish-product/list-finish-product`)
+  const res1 = await fetch(`${utils.baseURL}/api/admin/finish-product/list-product`)
   console.log(res)
   const results = await res.json()
+  const results2 = await res1.json()
   return {
     props: {
       results,
+      results2
     },
   }
 }
-const IndexProducts = ({ results }) => {
-  const [products, setProducts] = useState(results)
+const Index = ({ results, results2 }) => {
+  const [finishProducts, setFinishProducts] = useState(results)
+  const [products, setProducts] = useState(results2)
   const [loadPageState, setLoadPageState] = useState(false)
   useEffect(() => {
     setLoadPageState(true)
@@ -40,22 +44,22 @@ const IndexProducts = ({ results }) => {
   const removeItem = (id) => {
     console.log(id)
     var body = { id }
-    fetch(`${utils.baseURL}/api/admin/product/delete`, {
+    fetch(`${utils.baseURL}/api/admin/finish-product/delete`, {
       method: "POST",
       body: JSON.stringify(body)
     }).then(response => response.json()).then(result => {
       console.log(result)
-      const newList = products.filter((item) => item.id !== id);
+      const newList = finishProducts.filter((item) => item.id !== id);
       setProducts(newList);
     }).catch(error => console.log('error', error));
   }
-  const ListProducts = () => {
-    if (products == null) {
+  const ListFinishProducts = () => {
+    if (finishProducts == null) {
       console.log("news null roi dmm")
       return
     }
 
-    return products?.map((item, index) => {
+    return finishProducts?.map((item, index) => {
       return (
         <tr key={index}>
           <td>
@@ -71,7 +75,7 @@ const IndexProducts = ({ results }) => {
             <span className="badge badge-default m-l-10 hidden-sm-down">{item.published ? "Public" : "Review"}</span>
           </td>
           <td>
-            <a href={`/admin/product/edit?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-edit" ></i></a>
+            <a href={`/admin/finish-product/edit?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-edit" ></i></a>
             &nbsp;
             <button type="button" data-type="confirm" className="btn btn-danger js-sweetalert" title="Delete" onClick={() => removeItem(item.id)}><i className="fa fa-trash-o"></i></button>
           </td>
@@ -115,12 +119,12 @@ const IndexProducts = ({ results }) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Nông Sản"/>
+            <HeaderTitle title="sản phẩm thành phẩm" />
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
                   <div className="header" style={{ float: 'right' }}>
-                    <a href="/admin/product/create" className="btn btn-outline-secondary">Thêm nông sản</a>
+                    <a href="/admin/finish-product/create" className="btn btn-outline-secondary">Thêm nông sản</a>
                   </div>
 
                   <div className="body">
@@ -130,13 +134,13 @@ const IndexProducts = ({ results }) => {
                           <tr>
                             <th>Tiêu đề</th>
                             <th>Hình ảnh</th>
-                            <th>Thành Phẩm</th>
+                            <th>Mô tả</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {ListProducts()}
+                          {ListFinishProducts()}
                         </tbody>
                       </table>
                     </div>
@@ -152,7 +156,7 @@ const IndexProducts = ({ results }) => {
     </>
   )
 }
-export default dynamic(() => Promise.resolve(IndexProducts), { ssr: false })
+export default dynamic(() => Promise.resolve(Index), { ssr: false })
 
 // <Script strategy="afterInteractive" src="assets/js/vendors.min.js" async></Script>
 // <Script strategy="afterInteractive" src="assets/vendors/chartjs/Chart.min.js" async></Script>

@@ -17,9 +17,9 @@ export default function AdminSideNav() {
             <li className="nav-item dropdown mega-menu">
               <a href="/admin/product"
                 className="nav-link dropdown-toggle"
-                // data-toggle="dropdown"
-                ><i
-                  className="icon-grid"></i>
+              // data-toggle="dropdown"
+              ><i
+                className="icon-grid"></i>
                 <span>Nông sản</span></a>
               <div
                 className="dropdown-menu animated bounceIn  colmun2-menu">
@@ -63,9 +63,8 @@ export default function AdminSideNav() {
               </div>
             </li>
             <li className="nav-item dropdown mega-menu">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown"><i
+              <a href="/admin/finish-product"
+                className="nav-link"><i
                   className="icon-docs"></i>
                 <span>Thành Phẩm</span></a>
             </li>

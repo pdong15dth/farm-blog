@@ -12,66 +12,35 @@ import ScriptHeader from '@/src/components/ScriptHeader'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
-import { DocumentContext } from 'next/document'
-import { Post, Product } from '@prisma/client'
 import HeaderTitle from '@/src/components/HeaderTitle'
+import { DocumentContext } from 'next/document'
 import utils from '@/src/utils/constant'
-import { Bar } from 'react-chartjs-2'
-import { VulnChart } from '../../../src/components/VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
+
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
 
   const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
-  const res3 = await fetch(`${utils.baseURL}/api/admin/product/getById?id=${ctx.query.id}`)
 
   const nationals = await res1.json()
   const countries = await res2.json()
-  const news = await res3.json()
-  let selectContries = []
-  let selectNationals = []
-  let dataChart = []
-
-  if (news?.data != null) {
-    JSON.parse(news?.data).forEach(element => {
-      dataChart.push(element)
-    });
-  }
-
-  if (news?.country != null) {
-    JSON.parse(news?.country).forEach(element => {
-      selectContries.push(element)
-    });
-  }
-
-  if (news?.national != null) {
-    JSON.parse(news?.national).forEach(element => {
-      selectNationals.push(element)
-    });
-  }
 
   return {
     props: {
-      news: news,
-      listNational: nationals,
-      listContries: countries,
-      selectContries: selectContries,
-      selectNationals: selectNationals,
-      dataChart: dataChart
+      nationals: nationals,
+      countries: countries
     }
   };
 }
 
-const EditNews = (props) => {
-
-  const [news, setNews] = useState<Product>(props.news)
-  const [listNational, setlistNational] = useState(props.listNational)
-  const [listContries, setlistContries] = useState(props.listContries)
-  const [isLoading, setIsLoading] = useState(false)
-  const [loadPageState, setLoadPageState] = useState(false)
+const Create = (props) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [listNational, setListNational] = useState(props.nationals)
+  const [listContries, setListContries] = useState(props.countries)
+  const [news, setNews] = useState<any>(null)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
-
-
+  const [isLoading, setIsLoading] = useState(false)
+  const [imageData, setImageData] = useState("")
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
     dataCkeditor = dataTemplate;
@@ -79,11 +48,7 @@ const EditNews = (props) => {
   };
 
   useEffect(() => {
-    setLoadPageState(true)
-    const isAdmin = authService.checkAuthAdmin();
-    if (!isAdmin) {
-      router.push("/admin/login");
-    }
+    setIsLoaded(true)
   }, [])
 
 
@@ -91,6 +56,7 @@ const EditNews = (props) => {
     event.preventDefault();
     try {
       var err = []
+
       let contriesId = []
       for (let index = 0; index < event.target.checkbox1.length; index++) {
         const element = event.target.checkbox1[index];
@@ -123,6 +89,7 @@ const EditNews = (props) => {
           "2023": event.target.data5.value
         },
       ])
+
       var formdata = new FormData();
       formdata.append(
         "image",
@@ -149,12 +116,11 @@ const EditNews = (props) => {
           linkImage = data.data.link
         })
       } else {
-        linkImage = news.image;
+
       }
       let user = authService.getUserInfor()
 
       var data = {
-        id: news.id,
         title: event.target.title.value,
         description: event.target.description.value,
         authorId: user.id,
@@ -165,74 +131,73 @@ const EditNews = (props) => {
         national: JSON.stringify(nationalId),
         data: dataChart
       }
-      console.log(data)
-      fetch("/api/admin/product/upsert", {
+      console.log("debug 0")
+      fetch("/api/admin/finish-product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
       }).then(response => response.json()).then(res => {
         console.log(res)
         setIsLoading(false)
-        router.push("/admin/product");
+        router.push("/admin/finish-product");
       })
     } catch (error) {
     }
   }
-  const labels = props.dataChart.map(obj => Object.keys(obj)[0]);
-  const values = props.dataChart.map(obj => Object.values(obj)[0]);
-  const dataSource = {
-    labels,
-    datasets: [
-      {
-        label: 'Sản Lượng',
-        data: values.map((item) => item),
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-    ],
-  };
 
   const FormCreatePost = () => {
 
     return <form id="basic-form" onSubmit={postFormDataNews}>
       <div className="form-group">
-        <label>Tên Nông Sản</label>
-        <input type="text" defaultValue={news?.title} id='title' className="form-control" required />
+        <label>Tên sản phẩm thành phẩm</label>
+        <input type="text" id='title' className="form-control" required />
       </div>
       <div className="form-group">
-        <label>Chọn hình ảnh cho Nông Sản</label>
+        <label>Chọn hình ảnh cho sản phẩm thành phẩm</label>
         <div className="body" style={{ padding: 0 }}>
-          <input type="file" id="img" data-default-file={news?.image} className="dropify" />
+          <input type="file" id="img" className="dropify" />
         </div>
       </div>
       <div className="form-group">
-        <label>Mô tả Nông Sản</label>
-        <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
+        <label>Mô tả sản phẩm thành phẩm</label>
+        <textarea id='description' className="form-control" rows={5} cols={30} ></textarea>
       </div>
-
       <div className="form-group">
-        <label>Nội dung Nông Sản</label>
+        <label>Nội dung sản phẩm thành phẩm</label>
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
-
       <div className="form-group">
         <label>Tỉnh / TP</label>
         <br />
         {
-          listContries?.map((item, index) => {
+          listContries.map((item, index) => {
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} defaultChecked={props?.selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" value={item.id} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
               <span>{item.countryName}</span>
             </label>
           })
         }
         <p id="error-checkbox"></p>
       </div>
+      <div className="col-lg-4 col-md-12">
+        <label>Filter Enabled</label>
+        <select id="multiselect4-filter" name="multiselect4[]" className="multiselect multiselect-custom" multiple={true}>
+          <option value="bootstrap">Bootstrap</option>
+          <option value="bootstrap-marketplace">Bootstrap Marketplace</option>
+          <option value="bootstrap-theme">Bootstrap Theme</option>
+          <option value="html">HTML</option>
+          <option value="html-template">HTML Template</option>
+          <option value="wp-marketplace">WordPress Marketplace</option>
+          <option value="wp-plugin">WordPress Plugin</option>
+          <option value="wp-theme">WordPress Theme</option>
+        </select>
+      </div>
       <div className="form-group">
         <label>Quốc Gia</label>
         <br />
         {
-          listNational?.map((item, index) => {
+          listNational.map((item, index) => {
             return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" defaultValue={item.id} defaultChecked={props?.selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
+              <input type="checkbox" value={item.id} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
               <span>{item.nationalName}</span>
             </label>
           })
@@ -240,33 +205,44 @@ const EditNews = (props) => {
         <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
-        <label>Số liêu nông sản trong 5 năm</label>
+        <label>Số liêu sản phẩm thành phẩm trong 5 năm</label>
         <div className="row">
-          {
-            props.dataChart.map((item, index) => {
-              return <div key={index} className="col">
-                <label>{Object.entries(item)[0][0].toString()}</label>
-                <input type="text" id={`data${index + 1}`} defaultValue={Object.entries(item)[0][1].toString()} className="form-control" required />
-              </div>
-            })
-          }
+          <div className="col">
+            <label>2019</label>
+            <input type="text" id='data1' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2020</label>
+            <input type="text" id='data2' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2021</label>
+            <input type="text" id='data3' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2022</label>
+            <input type="text" id='data4' className="form-control" required />
+          </div>
+          <div className="col">
+            <label>2023</label>
+            <input type="text" id='data5' className="form-control" required />
+          </div>
+
         </div>
       </div>
       <div className="form-group">
         <div className="fancy-checkbox">
-          <label><input type="checkbox" id="published" defaultChecked={news?.published} /><span>Xuất bản</span></label>
+          <label><input type="checkbox" id="published" /><span>Xuất bản</span></label>
         </div>
       </div>
       <br />
-      {
-        isLoading ?
-          <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>
-          :
-          <button type="submit" className="btn btn-primary col-md-12">Lưu</button>
-      }
+      {/* {isLoading ?
+        <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>
+        :
+        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>} */}
+      <button type="submit" className="btn btn-primary col-md-12">Lưu</button>
     </form>
   }
-
   return (
     <>
       <Head>
@@ -280,10 +256,15 @@ const EditNews = (props) => {
 
         <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
+
       </Head>
+
       {/* <!-- VENDOR CSS --> */}
-      <CssHeader />
       <link rel="stylesheet" href="../../assets/vendor/dropify/css/dropify.min.css" />
+      <link rel="stylesheet" href="https://liruch.app/assets/vendor/bootstrap-multiselect/bootstrap-multiselect.css" />
+      <link rel="stylesheet" href="https://liruch.app/assets/vendor/multi-select/css/multi-select.css" />
+      <link rel="stylesheet" href="../../assets/vendor/parsleyjs/css/parsley.css" />
+      <CssHeader />
 
       {/* <!-- Page Loader --> */}
       {/* <div className="page-loader-wrapper">
@@ -304,7 +285,8 @@ const EditNews = (props) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Chỉnh sửa Nông Sản" />
+            <HeaderTitle title="Thêm sản phẩm thành phẩm" />
+
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
@@ -316,29 +298,27 @@ const EditNews = (props) => {
                   </div>
                 </div>
               </div>
-
-              <div className="card">
-                <div className="header">
-                  <h2>Review Chart</h2>
-                </div>
-                <div className="body">
-                  {VulnChart(dataSource)}
-                </div>
-              </div>
             </div>
-
           </div>
         </div>
       </div>
       {/* <!-- Javascript --> */}
       <ScriptHeader />
       <Script strategy="lazyOnload" src="../../assets/vendor/dropify/js/dropify.min.js"></Script>
+      {/* <!-- Multi Select Plugin Js --> */}
+      <Script strategy="lazyOnload" src="../../assets/vendor/bootstrap-multiselect/bootstrap-multiselect.js"></Script>
+      <Script strategy="lazyOnload" src="../../assets/vendor/multi-select/js/jquery.multi-select.js"></Script>
+      <script src="https://liruch.app/assets/vendor/bootstrap-multiselect/bootstrap-multiselect.js" ></script>
+      <script src="https://liruch.app/assets/vendor/multi-select/js/jquery.multi-select.js"></script>
+      <script src="https://liruch.app/assets/js/pages/forms/advanced-form-elements.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossOrigin="anonymous" referrerPolicy="no-referrer"></script>
+
       <Script strategy="lazyOnload" src="../../assets/js/pages/forms/dropify.js"></Script>
+      <Script strategy="lazyOnload" src="../../assets/js/pages/forms/advanced-form-elements.js"></Script>
     </>
   )
 
 }
-export default dynamic(() => Promise.resolve(EditNews), { ssr: false })
+export default dynamic(() => Promise.resolve(Create), { ssr: false })
 
 // <Script strategy="afterInteractive" src="assets/js/vendors.min.js" async></Script>
 // <Script strategy="afterInteractive" src="assets/vendors/chartjs/Chart.min.js" async></Script>
