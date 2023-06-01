@@ -48,8 +48,9 @@ const EditNews = (props) => {
     async function getPostById() {
       fetch(`/api/admin/news/getById?id=${props.id}`).then(response => response.json()).then(result => {
         setNews(result)
-        console.log("setNews", result)
+        // console.log("setNews", result)
       }).catch(error => {
+        console.log("error", error)
       });
     }
     getPostById()
@@ -110,6 +111,7 @@ const EditNews = (props) => {
         router.push("/admin/news");
       })
     } catch (error) {
+      console.log("error", error)
     }
   }
 
@@ -161,7 +163,7 @@ const EditNews = (props) => {
         <meta name="description" content="Lucid Bootstrap 4.1.1 Admin Template" />
         <meta name="author" content="WrapTheme, design by: ThemeMakker.com" />
 
-        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="../../favicon.ico" type="image/x-icon" />
 
       </Head>
       {/* <!-- VENDOR CSS --> */}

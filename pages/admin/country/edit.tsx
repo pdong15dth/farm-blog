@@ -131,7 +131,7 @@ const EditCountry = (props) => {
         <meta name="description" content="Lucid Bootstrap 4.1.1 Admin Template" />
         <meta name="author" content="WrapTheme, design by: ThemeMakker.com" />
 
-        <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="../../favicon.ico" type="image/x-icon" />
 
       </Head>
       {/* <!-- VENDOR CSS --> */}

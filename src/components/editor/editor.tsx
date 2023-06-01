@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ClassicEditor from "@ckeditor/ckeditor5-custom-build";
 import UploadAdapter from "./UploadAdapter";
 
 // Server URL
@@ -51,7 +51,7 @@ class App extends Component {
             });
           }}
           onChange={(event, editor) => {
-            const data = editor.getData();
+            const data = editor.data.get();
             this.props["onchangeData"](data);
           }}
           onBlur={(event, editor) => {
