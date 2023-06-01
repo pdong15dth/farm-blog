@@ -15,6 +15,10 @@ import router from 'next/router'
 import HeaderTitle from '@/src/components/HeaderTitle'
 import { DocumentContext } from 'next/document'
 import utils from '@/src/utils/constant'
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
 
 export async function getServerSideProps(ctx: DocumentContext) {
 
@@ -22,13 +26,17 @@ export async function getServerSideProps(ctx: DocumentContext) {
 
   const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
 
+  const res3 = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
+
   const nationals = await res1.json()
   const countries = await res2.json()
+  const products = await res3.json()
 
   return {
     props: {
       nationals: nationals,
-      countries: countries
+      countries: countries,
+      products: products
     }
   };
 }
@@ -37,10 +45,12 @@ const Create = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [listNational, setListNational] = useState(props.nationals)
   const [listContries, setListContries] = useState(props.countries)
+  const [listProduct, setListProduct] = useState(props.products)
   const [news, setNews] = useState<any>(null)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
   const [isLoading, setIsLoading] = useState(false)
   const [imageData, setImageData] = useState("")
+  const [productSelected, setProductSelected] = useState({ value: "", label: "" });
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
     dataCkeditor = dataTemplate;
@@ -49,6 +59,12 @@ const Create = (props) => {
 
   useEffect(() => {
     setIsLoaded(true)
+    console.log(listProduct)
+    const newArray = listProduct.map(item => ({
+      value: item.id,
+      label: item.title
+    }));
+    setOptionsWarna(newArray)
   }, [])
 
 
@@ -129,9 +145,10 @@ const Create = (props) => {
         published: event.target.published.checked,
         countries: JSON.stringify(contriesId),
         national: JSON.stringify(nationalId),
+        productId: productSelected.value,
         data: dataChart
       }
-      console.log("debug 0")
+      console.log("debug 0", data)
       fetch("/api/admin/finish-product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
@@ -143,6 +160,22 @@ const Create = (props) => {
     } catch (error) {
     }
   }
+
+  const [optionsWarna, setOptionsWarna] = useState([
+    { value: "biru", label: "Biru" },
+    { value: "kuning", label: "Kuning" },
+    { value: "hijau", label: "Hijau" },
+    { value: "cokelat", label: "Cokelat" },
+    { value: "merah", label: "Merah" }
+  ]);
+
+  const handleWarnaChange = async (selected, selectaction) => {
+    const { action } = selectaction;
+    // console.log(`action ${action}`);
+    // action.preventDefault();
+    console.log(action)
+    setProductSelected(selected);
+  };
 
   const FormCreatePost = () => {
 
@@ -166,6 +199,17 @@ const Create = (props) => {
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
       <div className="form-group">
+        <label>Chế biến từ sản phầm: </label>
+        <br />
+        <Select
+          id="productId"
+          closeMenuOnSelect={false}
+          components={animatedComponents}
+          options={optionsWarna}
+          onChange={handleWarnaChange}
+        />
+      </div>
+      <div className="form-group">
         <label>Tỉnh / TP</label>
         <br />
         {
@@ -178,19 +222,7 @@ const Create = (props) => {
         }
         <p id="error-checkbox"></p>
       </div>
-      <div className="col-lg-4 col-md-12">
-        <label>Filter Enabled</label>
-        <select id="multiselect4-filter" name="multiselect4[]" className="multiselect multiselect-custom" multiple={true}>
-          <option value="bootstrap">Bootstrap</option>
-          <option value="bootstrap-marketplace">Bootstrap Marketplace</option>
-          <option value="bootstrap-theme">Bootstrap Theme</option>
-          <option value="html">HTML</option>
-          <option value="html-template">HTML Template</option>
-          <option value="wp-marketplace">WordPress Marketplace</option>
-          <option value="wp-plugin">WordPress Plugin</option>
-          <option value="wp-theme">WordPress Theme</option>
-        </select>
-      </div>
+
       <div className="form-group">
         <label>Quốc Gia</label>
         <br />

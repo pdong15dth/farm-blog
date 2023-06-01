@@ -13,11 +13,15 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import authService from '@/src/services/authService/auth.service'
 import router from 'next/router'
 import { DocumentContext } from 'next/document'
-import { Post, Product } from '@prisma/client'
+import { FinishProduct, Post, Product } from '@prisma/client'
 import HeaderTitle from '@/src/components/HeaderTitle'
 import utils from '@/src/utils/constant'
 import { Bar } from 'react-chartjs-2'
 import { VulnChart } from '../../../src/components/VulnChart'
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
 
 export async function getServerSideProps(ctx: DocumentContext) {
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
@@ -25,9 +29,13 @@ export async function getServerSideProps(ctx: DocumentContext) {
   const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
   const res3 = await fetch(`${utils.baseURL}/api/admin/finish-product/getById?id=${ctx.query.id}`)
 
+  const res4 = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
+
   const nationals = await res1.json()
   const countries = await res2.json()
   const news = await res3.json()
+  const products = await res4.json()
+
   let selectContries = []
   let selectNationals = []
   let dataChart = []
@@ -57,19 +65,21 @@ export async function getServerSideProps(ctx: DocumentContext) {
       listContries: countries,
       selectContries: selectContries,
       selectNationals: selectNationals,
-      dataChart: dataChart
+      dataChart: dataChart,
+      products: products
     }
   };
 }
 
 const Edit = (props) => {
 
-  const [news, setNews] = useState<Product>(props.news)
+  const [news, setNews] = useState<FinishProduct>(props.news)
   const [listNational, setlistNational] = useState(props.listNational)
   const [listContries, setlistContries] = useState(props.listContries)
   const [isLoading, setIsLoading] = useState(false)
   const [loadPageState, setLoadPageState] = useState(false)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
+  const [listProduct, setListProduct] = useState(props.products)
 
 
   let dataCkeditor = news?.content ?? "";
@@ -84,6 +94,10 @@ const Edit = (props) => {
     if (!isAdmin) {
       router.push("/admin/login");
     }
+    console.log({
+      value: listProduct.find(item => item.id === news.productId).id,
+      label: listProduct.find(item => item.id === news.productId).title
+    })
   }, [])
 
 
@@ -189,6 +203,19 @@ const Edit = (props) => {
       },
     ],
   };
+  const [optionsWarna, setOptionsWarna] = useState(listProduct.map(item => ({
+    value: item.id,
+    label: item.title
+  })));
+  const [productSelected, setProductSelected] = useState({ value: "", label: "" });
+
+  const handleWarnaChange = async (selected, selectaction) => {
+    const { action } = selectaction;
+    // console.log(`action ${action}`);
+    // action.preventDefault();
+    console.log(action)
+    setProductSelected(selected);
+  };
 
   const FormCreatePost = () => {
 
@@ -212,7 +239,23 @@ const Edit = (props) => {
         <label>Nội dung sản phẩm thành phẩm</label>
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
-
+      <div className="form-group">
+        <label>Chế biến từ sản phầm: </label>
+        <br />
+        <Select
+          id="productId"
+          defaultValue={
+            {
+              value: listProduct.find(item => item.id === news.productId).id,
+              label: listProduct.find(item => item.id === news.productId).title
+            }
+          }
+          closeMenuOnSelect={false}
+          components={animatedComponents}
+          options={optionsWarna}
+          onChange={handleWarnaChange}
+        />
+      </div>
       <div className="form-group">
         <label>Tỉnh / TP</label>
         <br />

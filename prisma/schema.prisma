@@ -44,7 +44,7 @@ model Product {
   published     Boolean         @default(false)
   data          String?
   createdAt     DateTime        @default(now())
-  FinishProduct FinishProduct[]
+  finishProduct FinishProduct[]
 }
 
 model FinishProduct {

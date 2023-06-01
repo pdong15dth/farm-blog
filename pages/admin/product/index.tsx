@@ -18,7 +18,6 @@ import HeaderTitle from '@/src/components/HeaderTitle'
 
 export async function getStaticProps() {
   const res = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
-  console.log(res)
   const results = await res.json()
   return {
     props: {
@@ -56,6 +55,7 @@ const IndexProducts = ({ results }) => {
     }
 
     return products?.map((item, index) => {
+      console.log(item.finishProduct)
       return (
         <tr key={index}>
           <td>
@@ -65,7 +65,14 @@ const IndexProducts = ({ results }) => {
             <img src={item.image} className="image description" width={100} alt="" />
           </td>
           <td>
-            <address><i className="zmdi zmdi-pin"></i>{item.description}</address>
+            {
+              item.finishProduct.map((item2, index) => {
+                return <div key={index}>
+                  <a href={`/admin/finish-product/edit?id=${item2?.id}`}><i className="zmdi zmdi-pin"></i>{item2.title}</a>
+                  <br />
+                </div>
+              })
+            }
           </td>
           <td>
             <span className="badge badge-default m-l-10 hidden-sm-down">{item.published ? "Public" : "Review"}</span>
@@ -115,7 +122,7 @@ const IndexProducts = ({ results }) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="Nông Sản"/>
+            <HeaderTitle title="Nông Sản" />
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
