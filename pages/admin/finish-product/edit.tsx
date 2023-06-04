@@ -85,7 +85,6 @@ const Edit = (props) => {
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
     dataCkeditor = dataTemplate;
-    console.log(dataTemplate)
   };
 
   useEffect(() => {
@@ -94,10 +93,6 @@ const Edit = (props) => {
     if (!isAdmin) {
       router.push("/admin/login");
     }
-    console.log({
-      value: listProduct.find(item => item.id === news.productId).id,
-      label: listProduct.find(item => item.id === news.productId).title
-    })
   }, [])
 
 

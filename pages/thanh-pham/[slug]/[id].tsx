@@ -18,8 +18,8 @@ import parse from 'html-react-parser';
 
 export async function getServerSideProps(ctx: DocumentContext) {
 
-  const res = await fetch(`${utils.baseURL}/api/client/news/getById?id=${ctx.query.id}`)
-  const res2 = await fetch(`${utils.baseURL}/api/client/news/popular-posts`)
+  const res = await fetch(`${utils.baseURL}/api/client/finish-product/getById?id=${ctx.query.id}`)
+  const res2 = await fetch(`${utils.baseURL}/api/client/finish-product/popular-finish-product`)
   const newsDetail = await res.json()
   const popularPosts = await res2.json()
   console.log(ctx.query)

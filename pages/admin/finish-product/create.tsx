@@ -54,12 +54,10 @@ const Create = (props) => {
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
     dataCkeditor = dataTemplate;
-    console.log(dataTemplate)
   };
 
   useEffect(() => {
     setIsLoaded(true)
-    console.log(listProduct)
     const newArray = listProduct.map(item => ({
       value: item.id,
       label: item.title
@@ -119,7 +117,6 @@ const Create = (props) => {
       setIsLoading(true)
       if (event.target.img.files[0]?.name) {
 
-        console.log("post image")
 
         await fetch("https://api.imgur.com/3/image", {
           method: "post",
@@ -128,7 +125,6 @@ const Create = (props) => {
           },
           body: formdata
         }).then(data => data.json()).then(data => {
-          console.log(data.data.link)
           linkImage = data.data.link
         })
       } else {
@@ -148,12 +144,10 @@ const Create = (props) => {
         productId: productSelected.value,
         data: dataChart
       }
-      console.log("debug 0", data)
       fetch("/api/admin/finish-product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
       }).then(response => response.json()).then(res => {
-        console.log(res)
         setIsLoading(false)
         router.push("/admin/finish-product");
       })
@@ -171,9 +165,7 @@ const Create = (props) => {
 
   const handleWarnaChange = async (selected, selectaction) => {
     const { action } = selectaction;
-    // console.log(`action ${action}`);
     // action.preventDefault();
-    console.log(action)
     setProductSelected(selected);
   };
 

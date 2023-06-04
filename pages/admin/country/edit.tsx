@@ -17,7 +17,6 @@ import { DocumentContext } from 'next/document'
 import HeaderTitle from '@/src/components/HeaderTitle'
 
 export async function getServerSideProps(ctx: DocumentContext) {
-  console.log(ctx.query.id)
   const res = await fetch(`${utils.baseURL}/api/admin/country/getById?id=${ctx.query.id}`)
   const country = await res.json()
 
@@ -37,7 +36,6 @@ const EditCountry = (props) => {
   let dataCkeditor = news?.content ?? "";
   const handleDataAbout = (dataTemplate) => {
     dataCkeditor = dataTemplate;
-    console.log(dataTemplate)
   };
 
   useEffect(() => {
@@ -50,19 +48,16 @@ const EditCountry = (props) => {
     event.preventDefault();
     try {
       var err = []
-      console.log("Dopngne")
 
       setIsLoading(true)
       var data = {
         id: props.country.id,
         countryName: event.target.countryName.value,
       }
-      console.log(data)
       fetch("/api/admin/country/upsert", {
         method: "POST",
         body: JSON.stringify(data)
       }).then(response => response.json()).then(res => {
-        console.log(res.message)
         setIsLoading(false)
         setError("")
         if (res.code == 401) {
@@ -71,12 +66,8 @@ const EditCountry = (props) => {
         }
         router.push("/admin/country");
       }).catch(error => {
-        console.log("res.message 2")
-        console.log(error.message)
       })
     } catch (error) {
-
-      console.log("error")
     }
   }
 
@@ -89,8 +80,6 @@ const EditCountry = (props) => {
             <label>Tiêu đề bài viết</label>
             <input
               onChange={(event) => {
-                console.log(event.target.value)
-
                 setSlugTitle(utils.ChangeToSlug(event.target.value))
               }} type="text" id='countryName' defaultValue={props.country.countryName} className="form-control" required />
           </div>

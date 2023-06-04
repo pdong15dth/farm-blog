@@ -14,16 +14,17 @@ import utils from '@/src/utils/constant'
 
 
 export async function getStaticProps() {
-  const res = await fetch(`${utils.baseURL}/api/client/news/list-news`)
-  const posts = await res.json()
+  const res = await fetch(`${utils.baseURL}/api/client/finish-product/list-finish-product`)
+  const finishProducts = await res.json()
   return {
     props: {
-      posts,
+      finishProducts,
     },
   }
 }
 
 const Home = (props) => {
+  console.log(props.finishProducts)
   const [isLoaded, setIsLoaded] = useState(false)
   useEffect(() => {
     setIsLoaded(true)
@@ -31,7 +32,7 @@ const Home = (props) => {
 
   const RenderNewsList = () => {
 
-    return props.posts.map((item, index) => {
+    return props.finishProducts.map((item, index) => {
 
       return <div className="col-lg-6" key={index}>
         <div className="card single_post">
@@ -39,12 +40,12 @@ const Home = (props) => {
             <div className="img-post">
               <img className="d-block img-fluid" src={item.image} alt="First slide" />
             </div>
-            <h3><a href={`/tin-tuc/${item.slug}/${item.id}`}>{item.title}</a></h3>
+            <h3><a href={`/thanh-pham/${item.slug}/${item.id}`}>{item.title}</a></h3>
             <p>{item.description}</p>
           </div>
           <div className="footer">
             <div className="actions">
-              <a href={`/tin-tuc/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
+              <a href={`/thanh-pham/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
             </div>
             {/* <ul className="stats">
               <li><a href="#">General</a></li>
@@ -96,12 +97,12 @@ const Home = (props) => {
             <div className="block-header">
               <div className="row">
                 <div className="col-lg-5 col-md-8 col-sm-12">
-                  <h2>Dashboard</h2>
+                  <h2>Thành Phẩm</h2>
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item"><a
                       href="index.html"><i
                         className="icon-home"></i></a></li>
-                    <li className="breadcrumb-item active">Dashboard
+                    <li className="breadcrumb-item active">Thành Phẩm
                     </li>
                   </ul>
                 </div>

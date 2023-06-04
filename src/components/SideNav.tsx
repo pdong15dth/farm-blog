@@ -1,5 +1,34 @@
+import { DocumentContext } from "next/document"
+import utils from "../utils/constant"
+import { useEffect, useState } from "react"
+import Link from "next/link"
 
-export default function SideNav() {
+export async function getStaticProps() {
+  const res1 = await fetch(`${utils.baseURL}/api/client/national/index`)
+  const res2 = await fetch(`${utils.baseURL}/api/client/country/index`)
+  const national = await res1.json()
+  const countries = await res2.json()
+  return {
+    props: {
+      national,
+      countries,
+    },
+  }
+}
+export default function SideNav(props) {
+  const [national, setNational] = useState([])
+  const [countries, setCountries] = useState([])
+  useEffect(() => {
+    fetch(`${utils.baseURL}/api/client/national`).then(res => res.json()).then(results => {
+      console.log(results)
+      setNational(results)
+    })
+    fetch(`${utils.baseURL}/api/client/country`).then(res => res.json()).then(results => {
+      console.log(results)
+      setCountries(results)
+    })
+  }, [])
+
   return <div className="main_menu">
     <nav className="navbar navbar-expand-lg">
       <div className="container">
@@ -26,15 +55,12 @@ export default function SideNav() {
                     <div className="mega-list">
                       <ul className="list-unstyled">
                         <li><label>Trong nước</label></li>
-                        <li><a
-                          href="map-google.html">Google
-                          Map</a></li>
-                        <li><a
-                          href="map-yandex.html">Yandex
-                          Map</a></li>
-                        <li><a
-                          href="map-jvectormap.html">jVector
-                          Map</a></li>
+                        {
+                          countries.map((item, index) => {
+                            return <li key={index}><a
+                              href={`/nong-san/${item.slug}`}>{item.countryName}</a></li>
+                          })
+                        }
                       </ul>
                     </div>
                   </div>
@@ -42,18 +68,12 @@ export default function SideNav() {
                     <div className="mega-list">
                       <ul className="list-unstyled">
                         <li><label>Quốc tế</label></li>
-                        <li><a
-                          href="file-dashboard.html">Dashboard</a>
-                        </li>
-                        <li><a
-                          href="file-documents.html">Documents</a>
-                        </li>
-                        <li><a
-                          href="file-media.html">Media</a>
-                        </li>
-                        <li><a
-                          href="file-images.html">Images</a>
-                        </li>
+                        {
+                          national.map((item, index) => {
+                            return <li key={index}><a
+                              href="map-google.html">{item.nationalName}</a></li>
+                          })
+                        }
                       </ul>
                     </div>
                   </div>
@@ -61,9 +81,8 @@ export default function SideNav() {
               </div>
             </li>
             <li className="nav-item dropdown mega-menu">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown"><i
+              <a href="/thanh-pham"
+                className="nav-link"><i
                   className="icon-docs"></i>
                 <span>Thành Phẩm</span></a>
             </li>
