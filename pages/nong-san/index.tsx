@@ -14,20 +14,18 @@ import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
 
 export async function getServerSideProps(ctx: DocumentContext) {
-  console.log(ctx.query.slug)
-  let strUrl = `${utils.baseURL}/api/client/national/getById?slug=${ctx.query.slug}`
-  console.log(strUrl)
-  const resNational = await fetch(strUrl)
+
+  const resNational = await fetch(`${utils.baseURL}/api/client/national`)
   const nationals = await resNational.json()
-  console.log(nationals)
-  // if (nationals.length > 0) {
-  //   console.log(nationals)
-  // }
+  const resContries = await fetch(`${utils.baseURL}/api/client/country`)
+  const contries = await resContries.json()
   const res = await fetch(`${utils.baseURL}/api/client/product/list-product`)
   const products = await res.json()
   return {
     props: {
       products,
+      nationals,
+      contries
     },
   }
 }
@@ -47,7 +45,9 @@ const Home = (props) => {
         <div className="card single_post">
           <div className="body">
             <div className="img-post">
-              <img className="d-block img-fluid" src={item.image} alt="First slide" />
+              <a href={`/thanh-pham/${item.slug}/${item.id}`}>
+                <img className="d-block img-fluid" src={item.image} alt="First slide" />
+              </a>
             </div>
             <h3><a href={`/thanh-pham/${item.slug}/${item.id}`}>{item.title}</a></h3>
             <p>{item.description}</p>
@@ -120,7 +120,7 @@ const Home = (props) => {
                 </div>
               </div>
               <div className="row clearfix">
-                <div className="col-lg-12">
+                <div className="col-lg-8 col-md-12 left-box">
                   <div className="card">
                     <div className="header">
                       <h2>Lucid Activities</h2>
@@ -131,6 +131,59 @@ const Home = (props) => {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div className="col-lg-4 col-md-12 right-box">
+                  <div className="card">
+                    <div className="body search">
+                      <div className="input-group m-b-0">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text"><i className="icon-magnifier"></i></span>
+                        </div>
+                        <input type="text" className="form-control" placeholder="Search..." />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="card">
+                    <div className="header">
+                      <h2>Trong nước</h2>
+                    </div>
+                    <div className="body widget">
+                      <ul className="list-unstyled categories-clouds m-b-0">
+                        {
+                          props.contries.map((item, index) => {
+                            return <>  <li key={index}><a href="#">{item.countryName}</a></li></>
+                          })
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="card">
+                    <div className="header">
+                      <h2>Quốc tế</h2>
+                    </div>
+                    <div className="body widget">
+                      <ul className="list-unstyled categories-clouds m-b-0">
+                        {
+                          props.nationals.map((item, index) => {
+                            return <>  <li key={index}><a href="#">{item.nationalName}</a></li></>
+                          })
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="card">
+                  <div className="header">
+                    <h2>Nhận thông báo các bài viết mới nhất qua Email</h2>
+                  </div>
+                  <div className="body widget newsletter">
+                    <div className="input-group">
+                      <input type="text" className="form-control" placeholder="Nhập Email" />
+                      <div className="input-group-append">
+                        <span className="input-group-text"><i className="icon-paper-plane"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 </div>
               </div>
             </div>

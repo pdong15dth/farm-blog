@@ -22,13 +22,13 @@ model User {
 model Country {
   id          Int     @id @default(autoincrement())
   countryName String  @unique
-  slug        String?
+  slug        String? @unique
 }
 
 model National {
   id           Int     @id @default(autoincrement())
   nationalName String  @unique
-  slug         String?
+  slug         String? @unique
 }
 
 model Product {
@@ -86,4 +86,14 @@ model Comment {
   createdAt DateTime @default(now())
   Post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  address   String
+  phone     String
+  message   String
+  createdAt DateTime @default(now())
 }

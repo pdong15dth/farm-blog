@@ -4,10 +4,10 @@ import CryptoJS from 'crypto-js'
 const prisma = new PrismaClient()
 // POST /api/get-accounts
 export default async function handle(req, res) {
-    console.log("getby id national", req.query)
+    console.log("getby id national", req.query.id)
     const result = await prisma.national.findFirst({
         where: {
-            slug: req.query.slug
+            id: req.query.id
         }
     });
     console.log(result)

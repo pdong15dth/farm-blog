@@ -3,31 +3,7 @@ import utils from "../utils/constant"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
-export async function getStaticProps() {
-  const res1 = await fetch(`${utils.baseURL}/api/client/national/index`)
-  const res2 = await fetch(`${utils.baseURL}/api/client/country/index`)
-  const national = await res1.json()
-  const countries = await res2.json()
-  return {
-    props: {
-      national,
-      countries,
-    },
-  }
-}
 export default function SideNav(props) {
-  const [national, setNational] = useState([])
-  const [countries, setCountries] = useState([])
-  useEffect(() => {
-    fetch(`${utils.baseURL}/api/client/national`).then(res => res.json()).then(results => {
-      console.log(results)
-      setNational(results)
-    })
-    fetch(`${utils.baseURL}/api/client/country`).then(res => res.json()).then(results => {
-      console.log(results)
-      setCountries(results)
-    })
-  }, [])
 
   return <div className="main_menu">
     <nav className="navbar navbar-expand-lg">
@@ -43,42 +19,11 @@ export default function SideNav(props) {
               </a>
             </li>
             <li className="nav-item dropdown mega-menu">
-              <a href="#"
-                className="nav-link dropdown-toggle"
-                data-toggle="dropdown"><i
+              <a href="/nong-san"
+                className="nav-link dropdown-toggle"><i
                   className="icon-grid"></i>
                 <span>Nông sản</span></a>
-              <div
-                className="dropdown-menu animated bounceIn  colmun2-menu">
-                <div className="row clearfix">
-                  <div className="col-lg-6">
-                    <div className="mega-list">
-                      <ul className="list-unstyled">
-                        <li><label>Trong nước</label></li>
-                        {
-                          countries.map((item, index) => {
-                            return <li key={index}><a
-                              href={`/nong-san/${item.slug}`}>{item.countryName}</a></li>
-                          })
-                        }
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="mega-list">
-                      <ul className="list-unstyled">
-                        <li><label>Quốc tế</label></li>
-                        {
-                          national.map((item, index) => {
-                            return <li key={index}><a
-                              href="map-google.html">{item.nationalName}</a></li>
-                          })
-                        }
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
             </li>
             <li className="nav-item dropdown mega-menu">
               <a href="/thanh-pham"
@@ -94,9 +39,8 @@ export default function SideNav(props) {
 
             </li>
             <li className="nav-item dropdown">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown"><i
+              <a href="/lien-he"
+                className="nav-link"><i
                   className="icon-pencil"></i>
                 <span>Liên hệ</span></a>
             </li>

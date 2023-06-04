@@ -37,7 +37,9 @@ const Home = (props) => {
         <div className="card single_post">
           <div className="body">
             <div className="img-post">
-              <img className="d-block img-fluid" src={item.image} alt="First slide" />
+              <a href={`/tin-tuc/${item.slug}/${item.id}`}>
+                <img className="d-block img-fluid" src={item.image} alt="First slide" />
+              </a>
             </div>
             <h3><a href={`/tin-tuc/${item.slug}/${item.id}`}>{item.title}</a></h3>
             <p>{item.description}</p>
