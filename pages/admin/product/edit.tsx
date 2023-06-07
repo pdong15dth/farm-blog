@@ -21,14 +21,9 @@ import { VulnChart } from '../../../src/components/VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
-
-  const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
   const res3 = await fetch(`${utils.baseURL}/api/admin/product/getById?id=${ctx.query.id}`)
-
   const nationals = await res1.json()
-  const countries = await res2.json()
   const news = await res3.json()
-  let selectContries = []
   let selectNationals = []
   let dataChart = []
 
@@ -37,26 +32,11 @@ export async function getServerSideProps(ctx: DocumentContext) {
       dataChart.push(element)
     });
   }
-
-  if (news?.country != null) {
-    JSON.parse(news?.country).forEach(element => {
-      selectContries.push(element)
-    });
-  }
-
-  if (news?.national != null) {
-    JSON.parse(news?.national).forEach(element => {
-      selectNationals.push(element)
-    });
-  }
-
+  
   return {
     props: {
       news: news,
       listNational: nationals,
-      listContries: countries,
-      selectContries: selectContries,
-      selectNationals: selectNationals,
       dataChart: dataChart
     }
   };
@@ -66,9 +46,7 @@ const EditNews = (props) => {
 
   const [news, setNews] = useState<Product>(props.news)
   const [listNational, setlistNational] = useState(props.listNational)
-  const [listContries, setlistContries] = useState(props.listContries)
   const [isLoading, setIsLoading] = useState(false)
-  const [loadPageState, setLoadPageState] = useState(false)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
 
 
@@ -79,7 +57,6 @@ const EditNews = (props) => {
   };
 
   useEffect(() => {
-    setLoadPageState(true)
     const isAdmin = authService.checkAuthAdmin();
     if (!isAdmin) {
       router.push("/admin/login");
@@ -91,21 +68,6 @@ const EditNews = (props) => {
     event.preventDefault();
     try {
       var err = []
-      let contriesId = []
-      for (let index = 0; index < event.target.checkbox1.length; index++) {
-        const element = event.target.checkbox1[index];
-        if (element.checked) {
-          contriesId.push(parseInt(element.value))
-        }
-      }
-
-      let nationalId = []
-      for (let index = 0; index < event.target.checkbox2.length; index++) {
-        const element = event.target.checkbox2[index];
-        if (element.checked) {
-          nationalId.push(parseInt(element.value))
-        }
-      }
       let dataChart = JSON.stringify([
         {
           "2019": event.target.data1.value
@@ -161,8 +123,7 @@ const EditNews = (props) => {
         content: dataCkeditor,
         image: linkImage,
         published: event.target.published.checked,
-        countries: JSON.stringify(contriesId),
-        national: JSON.stringify(nationalId),
+        nationalId: parseInt(event.target.checkbox2.value),
         data: dataChart
       }
       console.log(data)
@@ -214,30 +175,16 @@ const EditNews = (props) => {
       </div>
 
       <div className="form-group">
-        <label>Tỉnh / TP</label>
+        <label>Tỉnh Thành / Quốc Gia</label>
         <br />
         {
-          listContries?.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} defaultChecked={props?.selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.countryName}</span>
+          listNational.map((item, index) => {
+            return <label className="fancy-radio" key={index}>
+              <input type="radio" name="checkbox2" value={item.id} required defaultChecked={news.nationalId == item.id} />
+              <span><i></i>{item.name}</span>
             </label>
           })
         }
-        <p id="error-checkbox"></p>
-      </div>
-      <div className="form-group">
-        <label>Quốc Gia</label>
-        <br />
-        {
-          listNational?.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" defaultValue={item.id} defaultChecked={props?.selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.nationalName}</span>
-            </label>
-          })
-        }
-        <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
         <label>Số liêu nông sản trong 5 năm</label>

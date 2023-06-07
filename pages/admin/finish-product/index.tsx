@@ -119,12 +119,12 @@ const Index = ({ results, results2 }) => {
 
         <div id="main-content">
           <div className="container">
-            <HeaderTitle title="sản phẩm thành phẩm" />
+            <HeaderTitle title="Sản phẩm thành phẩm" />
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
                   <div className="header" style={{ float: 'right' }}>
-                    <a href="/admin/finish-product/create" className="btn btn-outline-secondary">Thêm nông sản</a>
+                    <a href="/admin/finish-product/create" className="btn btn-outline-secondary">Thêm sản phẩm thành phẩm</a>
                   </div>
 
                   <div className="body">

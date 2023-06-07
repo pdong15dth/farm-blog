@@ -33,7 +33,7 @@ const Home = (props) => {
 
     return props.posts.map((item, index) => {
 
-      return <div className="col-lg-6" key={index}>
+      return <div className="col-lg-4" key={index}>
         <div className="card single_post">
           <div className="body">
             <div className="img-post">
@@ -114,7 +114,7 @@ const Home = (props) => {
               <div className="col-lg-12">
                 <div className="card">
                   <div className="header">
-                    <h2>Lucid Activities</h2>
+                    <h2>Tin Tức</h2>
                   </div>
                   <div className="body">
                     <div className="row">

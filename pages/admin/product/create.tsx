@@ -19,16 +19,11 @@ import utils from '@/src/utils/constant'
 export async function getServerSideProps(ctx: DocumentContext) {
 
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
-
-  const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
-
   const nationals = await res1.json()
-  const countries = await res2.json()
 
   return {
     props: {
       nationals: nationals,
-      countries: countries
     }
   };
 }
@@ -57,13 +52,6 @@ const CreateNews = (props) => {
     try {
       var err = []
 
-      let contriesId = []
-      for (let index = 0; index < event.target.checkbox1.length; index++) {
-        const element = event.target.checkbox1[index];
-        if (element.checked) {
-          contriesId.push(parseInt(element.value))
-        }
-      }
 
       let nationalId = []
       for (let index = 0; index < event.target.checkbox2.length; index++) {
@@ -89,7 +77,7 @@ const CreateNews = (props) => {
           "2023": event.target.data5.value
         },
       ])
-      
+
       var formdata = new FormData();
       formdata.append(
         "image",
@@ -127,11 +115,10 @@ const CreateNews = (props) => {
         content: dataCkeditor,
         image: linkImage,
         published: event.target.published.checked,
-        countries: JSON.stringify(contriesId),
-        national: JSON.stringify(nationalId),
+        nationalId: parseInt(event.target.checkbox2.value),
         data: dataChart
       }
-      console.log("debug 0")
+      console.log("debug 0", data)
       fetch("/api/admin/product/upsert", {
         method: "POST",
         body: JSON.stringify(data)
@@ -141,6 +128,7 @@ const CreateNews = (props) => {
         router.push("/admin/product");
       })
     } catch (error) {
+      console.log(error)
     }
   }
 
@@ -166,30 +154,16 @@ const CreateNews = (props) => {
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
       <div className="form-group">
-        <label>Tỉnh / TP</label>
-        <br />
-        {
-          listContries.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.countryName}</span>
-            </label>
-          })
-        }
-        <p id="error-checkbox"></p>
-      </div>
-      <div className="form-group">
-        <label>Quốc Gia</label>
+        <label>Tỉnh Thành / Quốc Gia</label>
         <br />
         {
           listNational.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.nationalName}</span>
+            return <label className="fancy-radio" key={index}>
+              <input type="radio" name="checkbox2" value={item.id} required defaultChecked />
+              <span><i></i>{item.name}</span>
             </label>
           })
         }
-        <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
         <label>Số liêu nông sản trong 5 năm</label>
@@ -227,13 +201,13 @@ const CreateNews = (props) => {
         <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>
         :
         <button type="submit" className="btn btn-primary col-md-12">Lưu</button>} */}
-        <button type="submit" className="btn btn-primary col-md-12">Lưu</button>
+      <button type="submit" className="btn btn-primary col-md-12">Lưu</button>
     </form>
   }
   return (
     <>
       <Head>
-        <title>:: Lucid H :: Home</title>
+        <title>:: Admin :: Nông Sản</title>
         <meta charSet="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
         <meta name="viewport"

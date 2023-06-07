@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 export default async function handle(req, res) {
     const result = await prisma.product.findMany({
         where: {
-            published: false
+            published: true
         },
         orderBy: {
             createdAt: 'desc'

@@ -25,14 +25,10 @@ const animatedComponents = makeAnimated();
 
 export async function getServerSideProps(ctx: DocumentContext) {
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
-
-  const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
   const res3 = await fetch(`${utils.baseURL}/api/admin/finish-product/getById?id=${ctx.query.id}`)
-
   const res4 = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
 
   const nationals = await res1.json()
-  const countries = await res2.json()
   const news = await res3.json()
   const products = await res4.json()
 
@@ -46,12 +42,6 @@ export async function getServerSideProps(ctx: DocumentContext) {
     });
   }
 
-  if (news?.country != null) {
-    JSON.parse(news?.country).forEach(element => {
-      selectContries.push(element)
-    });
-  }
-
   if (news?.national != null) {
     JSON.parse(news?.national).forEach(element => {
       selectNationals.push(element)
@@ -62,7 +52,6 @@ export async function getServerSideProps(ctx: DocumentContext) {
     props: {
       news: news,
       listNational: nationals,
-      listContries: countries,
       selectContries: selectContries,
       selectNationals: selectNationals,
       dataChart: dataChart,
@@ -93,6 +82,9 @@ const Edit = (props) => {
     if (!isAdmin) {
       router.push("/admin/login");
     }
+    console.log(listProduct.find(item => item.id === news.productId))
+    let defaultItem = listProduct.find(item => item.id === news.productId)
+    setProductSelected({ value: defaultItem.id, label: defaultItem.title })
   }, [])
 
 
@@ -100,21 +92,7 @@ const Edit = (props) => {
     event.preventDefault();
     try {
       var err = []
-      let contriesId = []
-      for (let index = 0; index < event.target.checkbox1.length; index++) {
-        const element = event.target.checkbox1[index];
-        if (element.checked) {
-          contriesId.push(parseInt(element.value))
-        }
-      }
-
-      let nationalId = []
-      for (let index = 0; index < event.target.checkbox2.length; index++) {
-        const element = event.target.checkbox2[index];
-        if (element.checked) {
-          nationalId.push(parseInt(element.value))
-        }
-      }
+     
       let dataChart = JSON.stringify([
         {
           "2019": event.target.data1.value
@@ -161,7 +139,7 @@ const Edit = (props) => {
         linkImage = news.image;
       }
       let user = authService.getUserInfor()
-
+      console.log("dataCkeditor", dataCkeditor)
       var data = {
         id: news.id,
         title: event.target.title.value,
@@ -170,8 +148,8 @@ const Edit = (props) => {
         content: dataCkeditor,
         image: linkImage,
         published: event.target.published.checked,
-        countries: JSON.stringify(contriesId),
-        national: JSON.stringify(nationalId),
+        productId: productSelected.value,
+        nationalId: parseInt(event.target.checkbox2.value),
         data: dataChart
       }
       console.log(data)
@@ -184,6 +162,7 @@ const Edit = (props) => {
         router.push("/admin/finish-product");
       })
     } catch (error) {
+      console.log(error)
     }
   }
   const labels = props.dataChart.map(obj => Object.keys(obj)[0]);
@@ -219,6 +198,7 @@ const Edit = (props) => {
         <label>Tên sản phẩm thành phẩm</label>
         <input type="text" defaultValue={news?.title} id='title' className="form-control" required />
       </div>
+
       <div className="form-group">
         <label>Chọn hình ảnh cho sản phẩm thành phẩm</label>
         <div className="body" style={{ padding: 0 }}>
@@ -226,18 +206,10 @@ const Edit = (props) => {
         </div>
       </div>
       <div className="form-group">
-        <label>Mô tả sản phẩm thành phẩm</label>
-        <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
-      </div>
-
-      <div className="form-group">
-        <label>Nội dung sản phẩm thành phẩm</label>
-        <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
-      </div>
-      <div className="form-group">
         <label>Chế biến từ sản phầm: </label>
         <br />
         <Select
+          required
           id="productId"
           defaultValue={
             {
@@ -252,30 +224,25 @@ const Edit = (props) => {
         />
       </div>
       <div className="form-group">
-        <label>Tỉnh / TP</label>
-        <br />
-        {
-          listContries?.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} defaultChecked={props?.selectContries.indexOf(item.id) != -1} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.countryName}</span>
-            </label>
-          })
-        }
-        <p id="error-checkbox"></p>
+        <label>Mô tả sản phẩm thành phẩm</label>
+        <textarea id='description' defaultValue={news?.description} className="form-control" rows={5} cols={30} required></textarea>
+      </div>
+
+      <div className="form-group">
+        <label>Nội dung sản phẩm thành phẩm</label>
+        <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
       <div className="form-group">
-        <label>Quốc Gia</label>
+        <label>Tỉnh Thành / Quốc Gia</label>
         <br />
         {
-          listNational?.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" defaultValue={item.id} defaultChecked={props?.selectNationals.includes(item.id)} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.nationalName}</span>
+          listNational.map((item, index) => {
+            return <label className="fancy-radio" key={index}>
+              <input type="radio" name="checkbox2" value={item.id} required defaultChecked={news.nationalId == item.id} />
+                <span><i></i>{item.name}</span>
             </label>
           })
         }
-        <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
         <label>Số liêu sản phẩm thành phẩm trong 5 năm</label>

@@ -23,19 +23,13 @@ const animatedComponents = makeAnimated();
 export async function getServerSideProps(ctx: DocumentContext) {
 
   const res1 = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
-
-  const res2 = await fetch(`${utils.baseURL}/api/admin/country/listCountry`)
-
   const res3 = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
-
   const nationals = await res1.json()
-  const countries = await res2.json()
   const products = await res3.json()
 
   return {
     props: {
       nationals: nationals,
-      countries: countries,
       products: products
     }
   };
@@ -44,7 +38,6 @@ export async function getServerSideProps(ctx: DocumentContext) {
 const Create = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [listNational, setListNational] = useState(props.nationals)
-  const [listContries, setListContries] = useState(props.countries)
   const [listProduct, setListProduct] = useState(props.products)
   const [news, setNews] = useState<any>(null)
   const Editor = dynamic(() => import("@/src/components/editor/editor"), { ssr: true });
@@ -70,22 +63,6 @@ const Create = (props) => {
     event.preventDefault();
     try {
       var err = []
-
-      let contriesId = []
-      for (let index = 0; index < event.target.checkbox1.length; index++) {
-        const element = event.target.checkbox1[index];
-        if (element.checked) {
-          contriesId.push(parseInt(element.value))
-        }
-      }
-
-      let nationalId = []
-      for (let index = 0; index < event.target.checkbox2.length; index++) {
-        const element = event.target.checkbox2[index];
-        if (element.checked) {
-          nationalId.push(parseInt(element.value))
-        }
-      }
       let dataChart = JSON.stringify([
         {
           "2019": event.target.data1.value
@@ -139,8 +116,7 @@ const Create = (props) => {
         content: dataCkeditor,
         image: linkImage,
         published: event.target.published.checked,
-        countries: JSON.stringify(contriesId),
-        national: JSON.stringify(nationalId),
+        nationalId: parseInt(event.target.checkbox2.value),
         productId: productSelected.value,
         data: dataChart
       }
@@ -177,6 +153,18 @@ const Create = (props) => {
         <input type="text" id='title' className="form-control" required />
       </div>
       <div className="form-group">
+        <label>Chế biến từ sản phầm: </label>
+        <br />
+        <Select
+          required
+          id="productId"
+          closeMenuOnSelect={false}
+          components={animatedComponents}
+          options={optionsWarna}
+          onChange={handleWarnaChange}
+        />
+      </div>
+      <div className="form-group">
         <label>Chọn hình ảnh cho sản phẩm thành phẩm</label>
         <div className="body" style={{ padding: 0 }}>
           <input type="file" id="img" className="dropify" />
@@ -190,66 +178,41 @@ const Create = (props) => {
         <label>Nội dung sản phẩm thành phẩm</label>
         <Editor data={dataCkeditor} onchangeData={handleDataAbout} id="dataCkeditor" />
       </div>
-      <div className="form-group">
-        <label>Chế biến từ sản phầm: </label>
-        <br />
-        <Select
-          id="productId"
-          closeMenuOnSelect={false}
-          components={animatedComponents}
-          options={optionsWarna}
-          onChange={handleWarnaChange}
-        />
-      </div>
-      <div className="form-group">
-        <label>Tỉnh / TP</label>
-        <br />
-        {
-          listContries.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} name="checkbox1" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.countryName}</span>
-            </label>
-          })
-        }
-        <p id="error-checkbox"></p>
-      </div>
 
       <div className="form-group">
-        <label>Quốc Gia</label>
+        <label>Tỉnh Thành / Quốc Gia</label>
         <br />
         {
           listNational.map((item, index) => {
-            return <label key={index} className="fancy-checkbox">
-              <input type="checkbox" value={item.id} name="checkbox2" data-parsley-errors-container="#error-checkbox" />
-              <span>{item.nationalName}</span>
+            return <label className="fancy-radio" key={index}>
+              <input type="radio" name="checkbox2" value={item.id} />
+              <span><i></i>{item.name}</span>
             </label>
           })
         }
-        <p id="error-checkbox"></p>
       </div>
       <div className="form-group">
         <label>Số liêu sản phẩm thành phẩm trong 5 năm</label>
         <div className="row">
           <div className="col">
             <label>2019</label>
-            <input type="text" id='data1' className="form-control" required />
+            <input type="text" id='data1' className="form-control" />
           </div>
           <div className="col">
             <label>2020</label>
-            <input type="text" id='data2' className="form-control" required />
+            <input type="text" id='data2' className="form-control" />
           </div>
           <div className="col">
             <label>2021</label>
-            <input type="text" id='data3' className="form-control" required />
+            <input type="text" id='data3' className="form-control" />
           </div>
           <div className="col">
             <label>2022</label>
-            <input type="text" id='data4' className="form-control" required />
+            <input type="text" id='data4' className="form-control" />
           </div>
           <div className="col">
             <label>2023</label>
-            <input type="text" id='data5' className="form-control" required />
+            <input type="text" id='data5' className="form-control" />
           </div>
 
         </div>

@@ -69,7 +69,7 @@ const IndexNational = ({ nationals }) => {
       return (
         <tr key={index}>
           <td>
-            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.nationalName}</span>
+            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.name}</span>
           </td>
           <td>
             <address><i className="zmdi zmdi-pin"></i>{item.slug}</address>
@@ -95,7 +95,8 @@ const IndexNational = ({ nationals }) => {
       let user = authService.getUserInfor()
 
       var data = {
-        nationalName: event.target.nationalName.value,
+        name: event.target.name.value,
+        isCountry: event.target.isCountry.value == "1" ? true : false
       }
       console.log(data)
       fetch("/api/admin/national/upsert", {
@@ -126,7 +127,7 @@ const IndexNational = ({ nationals }) => {
               console.log(event.target.value)
 
               setSlugTitle(utils.ChangeToSlug(event.target.value))
-            }} type="text" id='nationalName' className="form-control" required />
+            }} type="text" id='name' className="form-control" required />
           </div>
         </div>
         <div className="col-lg-6">
@@ -145,6 +146,19 @@ const IndexNational = ({ nationals }) => {
           </div>
           : <></>
       }
+      <div className="form-group">
+        <label>Khu vực</label>
+        <br />
+        <label className="fancy-radio">
+          <input type="radio" name="isCountry" value="1" required defaultChecked/>
+          <span><i></i>Trong nước</span>
+        </label>
+        <label className="fancy-radio">
+          <input type="radio" name="isCountry" value="0" />
+          <span><i></i>Quốc tế</span>
+        </label>
+        <p id="error-radio"></p>
+      </div>
       <br />
       {isLoading ?
         <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>

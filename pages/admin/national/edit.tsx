@@ -19,11 +19,11 @@ import HeaderTitle from '@/src/components/HeaderTitle'
 export async function getServerSideProps(ctx: DocumentContext) {
   console.log(ctx.query.id)
   const res = await fetch(`${utils.baseURL}/api/admin/national/getById?id=${ctx.query.id}`)
-  const country = await res.json()
+  const national = await res.json()
 
   return {
     props: {
-      country: country
+      national: national
     }
   };
 }
@@ -34,15 +34,10 @@ const EditNational = (props) => {
   const [slugTitle, setSlugTitle] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  let dataCkeditor = news?.content ?? "";
-  const handleDataAbout = (dataTemplate) => {
-    dataCkeditor = dataTemplate;
-    console.log(dataTemplate)
-  };
 
   useEffect(() => {
     setIsLoaded(true)
-    setSlugTitle(utils.ChangeToSlug(props.country.countryName))
+    setSlugTitle(utils.ChangeToSlug(props.national.name))
   }, [])
 
 
@@ -54,8 +49,9 @@ const EditNational = (props) => {
 
       setIsLoading(true)
       var data = {
-        id: props.country.id,
-        countryName: event.target.countryName.value,
+        id: props.national.id,
+        name: event.target.name.value,
+        isCountry: event.target.isCountry.value == "1" ? true : false
       }
       console.log(data)
       fetch("/api/admin/national/upsert", {
@@ -76,7 +72,7 @@ const EditNational = (props) => {
       })
     } catch (error) {
 
-      console.log("error")
+      console.log("error", error)
     }
   }
 
@@ -92,7 +88,7 @@ const EditNational = (props) => {
                 console.log(event.target.value)
 
                 setSlugTitle(utils.ChangeToSlug(event.target.value))
-              }} type="text" id='countryName' defaultValue={props.country.countryName} className="form-control" required />
+              }} type="text" id='name' defaultValue={props.national.name} className="form-control" required />
           </div>
 
           {
@@ -112,7 +108,23 @@ const EditNational = (props) => {
           </div>
         </div>
       </div>
-
+      <div className="form-group">
+        <label>Khu vực</label>
+        <br />
+        <label className="fancy-radio">
+          {
+            props.national.isCountry ? <input type="radio" name="isCountry" value="1" required defaultChecked /> : <input type="radio" name="isCountry" value="1" required />
+          }
+          <span><i></i>Trong nước</span>
+        </label>
+        <label className="fancy-radio">
+          {
+            !props.national.isCountry ? <input type="radio" name="isCountry" value="0" required defaultChecked /> : <input type="radio" name="isCountry" value="0" required />
+          }
+          <span><i></i>Quốc tế</span>
+        </label>
+        <p id="error-radio"></p>
+      </div>
       <br />
       {isLoading ?
         <button type="submit" disabled className="btn btn-primary col-md-12">Đang lưu</button>

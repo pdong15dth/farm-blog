@@ -17,8 +17,7 @@ export default async function handle(req, res) {
         image: body.image,
         data: body.data,
         authorId: body.authorId,
-        country: body.countries,
-        national: body.national,
+        nationalId: body.nationalId,
         published: body.published
     }
     console.log(data)
@@ -35,8 +34,7 @@ export default async function handle(req, res) {
             slugOriginal: slugOriginal,
             image: body.image,
             data: body.data,
-            country: body.countries,
-            national: body.national,
+            nationalId: body.nationalId,
             published: body.published
         },
         update: {
@@ -47,8 +45,7 @@ export default async function handle(req, res) {
             slugOriginal: slugOriginal,
             image: body.image,
             data: body.data,
-            country: body.countries,
-            national: body.national,
+            nationalId: body.nationalId,
             published: body.published
         }
     }).catch(error => {

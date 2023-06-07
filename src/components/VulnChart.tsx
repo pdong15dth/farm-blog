@@ -28,7 +28,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Xem trước biểu đồ báo cáo sản lượng trong 5 năm gần đây',
+      text: 'Biểu đồ báo cáo sản lượng trong 5 năm gần đây',
     },
   },
 };

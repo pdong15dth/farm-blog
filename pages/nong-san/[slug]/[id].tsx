@@ -19,21 +19,22 @@ import { VulnChart } from '@/src/components/VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
 
-  const res = await fetch(`${utils.baseURL}/api/client/finish-product/getById?id=${ctx.query.id}`)
-  const res2 = await fetch(`${utils.baseURL}/api/client/finish-product/popular-finish-product`)
-  const newsDetail = await res.json()
-  const popularPosts = await res2.json()
-  console.log(ctx.query)
+  const res = await fetch(`${utils.baseURL}/api/client/product/getById?id=${ctx.query.id}`)
+  const res2 = await fetch(`${utils.baseURL}/api/client/product/popular-product`)
+  const productDetail = await res.json()
+  const popularProduct = await res2.json()
+  console.log("productDetail")
   let dataChart = []
-  if (newsDetail?.data != null) {
-    JSON.parse(newsDetail?.data).forEach(element => {
+  if (productDetail?.data != null) {
+    JSON.parse(productDetail?.data).forEach(element => {
       dataChart.push(element)
     });
   }
+
   return {
     props: {
-      newsDetail,
-      popularPosts,
+      productDetail,
+      popularProduct,
       dataChart
     },
   }
@@ -45,6 +46,7 @@ const Index = (props) => {
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
   const labels = props.dataChart.map(obj => Object.keys(obj)[0]);
   const values = props.dataChart.map(obj => Object.values(obj)[0]);
   const dataSource = {
@@ -57,6 +59,7 @@ const Index = (props) => {
       },
     ],
   };
+
   return (
     <>
       <Head>
@@ -102,8 +105,8 @@ const Index = (props) => {
                     <li className="breadcrumb-item"><a
                       href="index.html"><i
                         className="icon-home"></i></a></li>
-                    <li className="breadcrumb-item active">Tin tức</li>
-                    <li className="breadcrumb-item active">{props.newsDetail.title}</li>
+                    <li className="breadcrumb-item active">Nông sản</li>
+                    <li className="breadcrumb-item active">{props.productDetail.title}</li>
                   </ul>
                 </div>
 
@@ -114,16 +117,16 @@ const Index = (props) => {
                 <div className="card single_post">
                   <div className="body">
                     <div className="img-post">
-                      <img className="d-block img-fluid" src={props.newsDetail.image} alt="First slide" />
+                      <img className="d-block img-fluid" src={props.productDetail.image} alt="First slide" />
                     </div>
-                    <h3><a href="blog-details.html">{props.newsDetail.title}</a></h3>
-                    <p>{props.newsDetail.description}</p>
+                    <h3><a href="blog-details.html">{props.productDetail.title}</a></h3>
+                    <p>{props.productDetail.description}</p>
                     <br />
-                    {parse(`${props.newsDetail.content}`)}
+                    {parse(`${props.productDetail.content}`)}
                   </div>
                   <div className="card">
                     <div className="header">
-                      <h2>Biểu đồ sản lượng {props.newsDetail.title}</h2>
+                      <h2>Biểu đồ sản lượng {props.productDetail.title}</h2>
                     </div>
                     <div className="body">
                       {VulnChart(dataSource)}
@@ -219,15 +222,14 @@ const Index = (props) => {
                   <div className="body widget popular-post">
                     <div className="row">
                       <div className="col-lg-12">
-                        {props.popularPosts.map((item, index) => {
-                          return <a key={index} href={`/thanh-pham/${item.slug}/${item.id}`}><div className="single_post">
+                        {props.popularProduct.map((item, index) => {
+                          return <div className="single_post" key={index}>
                             <p className="m-b-0">{item.title}</p>
-                            <a href={`/thanh-pham/${item.slug}/${item.id}`}><span>Ngày đăng: {item.createdAt.substr(0, 10)}</span></a>
+                            <span>{item.createdAt.substr(0, 10)}</span>
                             <div className="img-post">
                               <img src={item.image} alt="Awesome Image" />
                             </div>
                           </div>
-                          </a>
                         })}
                       </div>
                     </div>

@@ -33,16 +33,10 @@ export default function AdminSideNav() {
                 <span>Danh Sách Tin tức</span></a>
             </li>
             <li className="nav-item dropdown">
-              <a href="/admin/country"
-                className="nav-link"><i
-                  className="icon-pencil"></i>
-                <span>Danh Sách Tỉnh / Thành Phố</span></a>
-            </li>
-            <li className="nav-item dropdown">
               <a href="/admin/national"
                 className="nav-link"><i
                   className="icon-pencil"></i>
-                <span>Danh Sách Quốc Gia</span></a>
+                <span>Danh Sách Khu Vực</span></a>
             </li>
             <li className="nav-item dropdown">
               <a href="/admin/contact"

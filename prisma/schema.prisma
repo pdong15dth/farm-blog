@@ -19,16 +19,13 @@ model User {
   posts    Post[]
 }
 
-model Country {
-  id          Int     @id @default(autoincrement())
-  countryName String  @unique
-  slug        String? @unique
-}
-
 model National {
-  id           Int     @id @default(autoincrement())
-  nationalName String  @unique
-  slug         String? @unique
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  slug          String?         @unique
+  isCountry     Boolean
+  Product       Product[]
+  FinishProduct FinishProduct[]
 }
 
 model Product {
@@ -40,7 +37,8 @@ model Product {
   slugOriginal  String?
   image         String?
   country       String?
-  national      String?
+  national      National        @relation(fields: [nationalId], references: [id])
+  nationalId    Int
   published     Boolean         @default(false)
   data          String?
   createdAt     DateTime        @default(now())
@@ -57,8 +55,8 @@ model FinishProduct {
   image        String?
   published    Boolean  @default(false)
   data         String?
-  country      String?
-  national     String?
+  national     National @relation(fields: [nationalId], references: [id])
+  nationalId   Int
   product      Product  @relation(fields: [productId], references: [id])
   productId    Int
   createdAt    DateTime @default(now())

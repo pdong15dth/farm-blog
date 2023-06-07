@@ -34,11 +34,11 @@ const Home = (props) => {
 
     return props.finishProducts.map((item, index) => {
 
-      return <div className="col-lg-6" key={index}>
+      return <div className="col-lg-4" key={index}>
         <div className="card single_post">
           <div className="body">
             <div className="img-post">
-              <a href={`/tin-tuc/${item.slug}/${item.id}`}>
+              <a href={`/thanh-pham/${item.slug}/${item.id}`}>
                 <img className="d-block img-fluid" src={item.image} alt="First slide" />
               </a>
             </div>

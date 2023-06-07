@@ -3,19 +3,21 @@ import utils from '@/src/utils/constant'
 
 export default async function handle(req, res) {
     const body = JSON.parse(req.body)
-    var b = utils.ChangeToSlug(body.nationalName)
+    var b = utils.ChangeToSlug(body.name)
     var slug = b
     const result = await prisma.national.upsert({
         where: {
             id: parseInt(body?.id ?? 0) ?? 0
         },
         create: {
-            nationalName: body.nationalName,
+            name: body.name,
             slug: slug,
+            isCountry: body.isCountry
         },
         update: {
-            nationalName: body.nationalName,
+            name: body.nationalName,
             slug: slug,
+            isCountry: body.isCountry
         }
     }).catch(error => {
         console.log("Lỗi ở đây này")

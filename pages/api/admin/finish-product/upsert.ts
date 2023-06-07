@@ -2,12 +2,10 @@ import prisma from '@/src/services/basePrisma/BasePrisma'
 import utils from '@/src/utils/constant'
 
 export default async function handle(req, res) {
-    console.log("debug 1")
     const body = JSON.parse(req.body)
     var b = utils.ChangeToSlug(body.title)
     var slug = b
     var slugOriginal = b
-    console.log("debug 1")
 
     const result = await prisma.finishProduct.upsert({
         where: {
@@ -21,8 +19,7 @@ export default async function handle(req, res) {
             slugOriginal: slugOriginal,
             image: body.image,
             data: body.data,
-            country: body.countries,
-            national: body.national,
+            nationalId: body.nationalId,
             productId: body.productId,
             published: body.published
         },
@@ -34,8 +31,7 @@ export default async function handle(req, res) {
             slugOriginal: slugOriginal,
             image: body.image,
             data: body.data,
-            country: body.countries,
-            national: body.national,
+            nationalId: body.nationalId,
             productId: body.productId,
             published: body.published
         }
@@ -44,6 +40,6 @@ export default async function handle(req, res) {
         console.log(error);
     });
 
-    console.log(result)
+    console.log("result")
     res.json(result, {});
 }

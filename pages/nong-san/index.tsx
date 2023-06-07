@@ -45,16 +45,16 @@ const Home = (props) => {
         <div className="card single_post">
           <div className="body">
             <div className="img-post">
-              <a href={`/thanh-pham/${item.slug}/${item.id}`}>
+              <a href={`/nong-san/${item.slug}/${item.id}`}>
                 <img className="d-block img-fluid" src={item.image} alt="First slide" />
               </a>
             </div>
-            <h3><a href={`/thanh-pham/${item.slug}/${item.id}`}>{item.title}</a></h3>
+            <h3><a href={`/nong-san/${item.slug}/${item.id}`}>{item.title}</a></h3>
             <p>{item.description}</p>
           </div>
           <div className="footer">
             <div className="actions">
-              <a href={`/thanh-pham/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
+              <a href={`/nong-san/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
             </div>
             {/* <ul className="stats">
               <li><a href="#">General</a></li>
@@ -123,7 +123,7 @@ const Home = (props) => {
                 <div className="col-lg-8 col-md-12 left-box">
                   <div className="card">
                     <div className="header">
-                      <h2>Lucid Activities</h2>
+                      <h2>Nông Sản</h2>
                     </div>
                     <div className="body">
                       <div className="row">
