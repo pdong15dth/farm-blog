@@ -114,9 +114,6 @@ const Home = (props) => {
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
-                  <div className="header">
-                    <h2>Lucid Activities</h2>
-                  </div>
                   <div className="body">
                     <div className="row">
                       {RenderNewsList()}

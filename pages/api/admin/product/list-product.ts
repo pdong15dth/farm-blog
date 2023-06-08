@@ -6,7 +6,8 @@ export default async function handle(req, res) {
             createdAt: 'desc'
         },
         include: {
-            finishProduct: true
+            finishProduct: true,
+            national: true
         }
     });
     res.json(result);

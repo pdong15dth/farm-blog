@@ -12,9 +12,8 @@ export default function SideNav(props) {
           id="navbar">
           <ul className="navbar-nav">
             <li className="nav-item dropdown active">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown">
+              <a href="/"
+                className="nav-link">
                 <i className="icon-speedometer"></i> Trang chủ
               </a>
             </li>

@@ -13,7 +13,12 @@ export default async function handle(req, res) {
     console.log(national)
     const result = await prisma.product.findMany({
         where: {
-            published: true
+            published: true,
+            nationalId: national?.id
+        },
+        include: {
+            finishProduct: true,
+            national: true
         },
         orderBy: {
             createdAt: 'desc'

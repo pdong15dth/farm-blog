@@ -28,7 +28,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Biểu đồ báo cáo sản lượng trong 5 năm gần đây',
+      text: 'Biểu đồ báo cáo sản lượng trong 5 năm gần đây (Đơn vị: Tấn)',
     },
   },
 };
@@ -46,7 +46,7 @@ export const data = {
   ],
 };
 
-export function VulnChart(dataSource: Object) {
+export function VulnChart(dataSource) {
   console.log(dataSource)
   return <Bar options={options} data={dataSource} />;
 }

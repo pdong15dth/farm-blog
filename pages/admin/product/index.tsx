@@ -75,12 +75,18 @@ const IndexProducts = ({ results }) => {
             }
           </td>
           <td>
+            <span className="badge badge-success m-l-10 hidden-sm-down">{item.national.name}</span>
+          </td>
+          <td>
             <span className="badge badge-default m-l-10 hidden-sm-down">{item.published ? "Public" : "Review"}</span>
           </td>
           <td>
             <a href={`/admin/product/edit?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-edit" ></i></a>
             &nbsp;
             <button type="button" data-type="confirm" className="btn btn-danger js-sweetalert" title="Delete" onClick={() => removeItem(item.id)}><i className="fa fa-trash-o"></i></button>
+          </td>
+          <td>
+            <a href={`/admin/product/copy-product?id=${item?.id}`} type="button" className="btn btn-info" title="Edit"><i className="fa fa-plus" ></i></a>
           </td>
         </tr>
       )
@@ -135,11 +141,13 @@ const IndexProducts = ({ results }) => {
                       <table className="table table-hover m-b-0 c_list">
                         <thead>
                           <tr>
-                            <th>Tiêu đề</th>
+                            <th>Tên Nông Sản</th>
                             <th>Hình ảnh</th>
                             <th>Thành Phẩm</th>
+                            <th>Tỉnh Thành / QG</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
+                            <th>Thêm nông sản cho tỉnh khác</th>
                           </tr>
                         </thead>
                         <tbody>

@@ -98,12 +98,12 @@ const Home = (props) => {
             <div className="block-header">
               <div className="row">
                 <div className="col-lg-5 col-md-8 col-sm-12">
-                  <h2>Dashboard</h2>
+                  <h2>Tin Tức</h2>
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item"><a
                       href="index.html"><i
                         className="icon-home"></i></a></li>
-                    <li className="breadcrumb-item active">Dashboard
+                    <li className="breadcrumb-item active">Tin Tức
                     </li>
                   </ul>
                 </div>
@@ -113,9 +113,6 @@ const Home = (props) => {
             <div className="row clearfix">
               <div className="col-lg-12">
                 <div className="card">
-                  <div className="header">
-                    <h2>Tin Tức</h2>
-                  </div>
                   <div className="body">
                     <div className="row">
                       {RenderNewsList()}

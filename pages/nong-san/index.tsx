@@ -14,10 +14,10 @@ import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
 
 export async function getServerSideProps(ctx: DocumentContext) {
-
+  console.log(ctx.query.tinh_tp)
   const resNational = await fetch(`${utils.baseURL}/api/client/national`)
   const nationals = await resNational.json()
-  const res = await fetch(`${utils.baseURL}/api/client/product/list-product?national=${ctx.query.national}`)
+  const res = await fetch(`${utils.baseURL}/api/client/product/list-product?national=${ctx.query.tinh_tp}`)
   const products = await res.json()
   return {
     props: {
@@ -53,11 +53,9 @@ const Home = (props) => {
             <div className="actions">
               <a href={`/nong-san/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
             </div>
-            {/* <ul className="stats">
-              <li><a href="#">General</a></li>
-              <li><a href="#" className="icon-heart">28</a></li>
-              <li><a href="#" className="icon-bubbles">128</a></li>
-            </ul> */}
+            <ul className="stats">
+              <li><a href={`/nong-san?tinh_tp=${item.national.slug}`}>{item.national.name}</a></li>
+            </ul>
           </div>
         </div>
       </div>
@@ -104,12 +102,12 @@ const Home = (props) => {
               <div className="block-header">
                 <div className="row">
                   <div className="col-lg-5 col-md-8 col-sm-12">
-                    <h2>Thành Phẩm</h2>
+                    <h2>Nông Sản</h2>
                     <ul className="breadcrumb">
                       <li className="breadcrumb-item"><a
                         href="index.html"><i
                           className="icon-home"></i></a></li>
-                      <li className="breadcrumb-item active">Thành Phẩm
+                      <li className="breadcrumb-item active">Nông Sản
                       </li>
                     </ul>
                   </div>
@@ -119,9 +117,6 @@ const Home = (props) => {
               <div className="row clearfix">
                 <div className="col-lg-8 col-md-12 left-box">
                   <div className="card">
-                    <div className="header">
-                      <h2>Nông Sản</h2>
-                    </div>
                     <div className="body">
                       <div className="row">
                         {RenderNewsList()}
@@ -146,27 +141,28 @@ const Home = (props) => {
                     </div>
                     <div className="body widget">
                       <ul className="list-unstyled categories-clouds m-b-0">
+                        <li ><a href={`/nong-san`}>Tất cả</a></li>
                         {
                           props.nationals.map((item, index) => {
-                            return <>  <li key={index}><a href="#">{item.name }</a></li></>
+                            return <>  <li key={index}><a href={`/nong-san?tinh_tp=${item.slug}`}>{item.name}</a></li></>
                           })
                         }
                       </ul>
                     </div>
                   </div>
                   <div className="card">
-                  <div className="header">
-                    <h2>Nhận thông báo các bài viết mới nhất qua Email</h2>
-                  </div>
-                  <div className="body widget newsletter">
-                    <div className="input-group">
-                      <input type="text" className="form-control" placeholder="Nhập Email" />
-                      <div className="input-group-append">
-                        <span className="input-group-text"><i className="icon-paper-plane"></i></span>
+                    <div className="header">
+                      <h2>Nhận thông báo các bài viết mới nhất qua Email</h2>
+                    </div>
+                    <div className="body widget newsletter">
+                      <div className="input-group">
+                        <input type="text" className="form-control" placeholder="Nhập Email" />
+                        <div className="input-group-append">
+                          <span className="input-group-text"><i className="icon-paper-plane"></i></span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </div>
               </div>
             </div>

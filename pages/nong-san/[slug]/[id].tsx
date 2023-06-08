@@ -19,8 +19,8 @@ import { VulnChart } from '@/src/components/VulnChart'
 
 export async function getServerSideProps(ctx: DocumentContext) {
 
-  const res = await fetch(`${utils.baseURL}/api/client/finish-product/getById?id=${ctx.query.id}`)
-  const res2 = await fetch(`${utils.baseURL}/api/client/finish-product/popular-finish-product`)
+  const res = await fetch(`${utils.baseURL}/api/client/product/getById?id=${ctx.query.id}`)
+  const res2 = await fetch(`${utils.baseURL}/api/client/product/popular-product`)
   const newsDetail = await res.json()
   const popularPosts = await res2.json()
   console.log(ctx.query)
@@ -112,10 +112,12 @@ const Index = (props) => {
             <div className="row clearfix">
               <div className="col-lg-8 col-md-12 left-box">
                 <div className="card single_post">
+
                   <div className="body">
                     <div className="img-post">
                       <img className="d-block img-fluid" src={props.newsDetail.image} alt="First slide" />
                     </div>
+
                     <h3><a href="blog-details.html">{props.newsDetail.title}</a></h3>
                     <p>{props.newsDetail.description}</p>
                     <div className="card">
