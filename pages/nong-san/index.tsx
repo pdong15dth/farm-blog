@@ -17,15 +17,12 @@ export async function getServerSideProps(ctx: DocumentContext) {
 
   const resNational = await fetch(`${utils.baseURL}/api/client/national`)
   const nationals = await resNational.json()
-  const resContries = await fetch(`${utils.baseURL}/api/client/country`)
-  const contries = await resContries.json()
-  const res = await fetch(`${utils.baseURL}/api/client/product/list-product`)
+  const res = await fetch(`${utils.baseURL}/api/client/product/list-product?national=${ctx.query.national}`)
   const products = await res.json()
   return {
     props: {
       products,
       nationals,
-      contries
     },
   }
 }
@@ -145,27 +142,13 @@ const Home = (props) => {
                   </div>
                   <div className="card">
                     <div className="header">
-                      <h2>Trong nước</h2>
-                    </div>
-                    <div className="body widget">
-                      <ul className="list-unstyled categories-clouds m-b-0">
-                        {
-                          props.contries.map((item, index) => {
-                            return <>  <li key={index}><a href="#">{item.countryName}</a></li></>
-                          })
-                        }
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="card">
-                    <div className="header">
-                      <h2>Quốc tế</h2>
+                      <h2>Tỉnh Thành Phố / Quốc Gia</h2>
                     </div>
                     <div className="body widget">
                       <ul className="list-unstyled categories-clouds m-b-0">
                         {
                           props.nationals.map((item, index) => {
-                            return <>  <li key={index}><a href="#">{item.nationalName}</a></li></>
+                            return <>  <li key={index}><a href="#">{item.name }</a></li></>
                           })
                         }
                       </ul>
