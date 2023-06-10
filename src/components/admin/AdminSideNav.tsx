@@ -8,9 +8,8 @@ export default function AdminSideNav() {
           id="navbar">
           <ul className="navbar-nav">
             <li className="nav-item dropdown active">
-              <a href="#"
-                className="nav-link"
-                data-toggle="dropdown">
+              <a href="/admin"
+                className="nav-link">
                 <i className="icon-speedometer"></i>Dashboard
               </a>
             </li>

@@ -10,6 +10,9 @@ export default async function handle(req, res) {
         },
         orderBy: {
             createdAt: 'desc'
+        },
+        include: {
+            national: true
         }
     });
     res.json(result);

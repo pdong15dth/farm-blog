@@ -29,6 +29,7 @@ export async function getStaticProps() {
 const IndexNews = ({ posts }) => {
   const [news, setNews] = useState(posts)
   const [loadPageState, setLoadPageState] = useState(false)
+  const [comments, setComments] = useState([])
   useEffect(() => {
     setLoadPageState(true)
     const isAdmin = authService.checkAuthAdmin();
@@ -59,13 +60,59 @@ const IndexNews = ({ posts }) => {
       return (
         <tr key={index}>
           <td>
+            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.id}</span>
+          </td>
+          <td>
             <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.title}</span>
           </td>
           <td>
             <img src={item.image} className="image description" width={100} alt="" />
           </td>
           <td>
-            <address><i className="zmdi zmdi-pin"></i>{item.description}</address>
+            <td>
+              <button type="button" className="btn btn-primary" data-toggle="modal" data-target={`.${item.id}`}>Bình Luận ({item.comments.length})</button>
+            </td>
+            <div className={`modal fade ${item.id}`} tabIndex={-1} role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+              <div className="modal-dialog modal-lg modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLongTitle">Bình Luận</h5>
+                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="table-responsive">
+                    <table className="table table-hover m-b-0 c_list">
+                      <thead>
+                        <tr>
+                          <th>Họ và Tên</th>
+                          <th>Email</th>
+                          <th>Nội dung</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          item.comments.map((item, index2) => {
+                            return <tr key={index2}>
+                              <td>
+                                <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.fullName}</span>
+                              </td>
+                              <td>
+                                <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.email}</span>
+                              </td>
+                              <td>
+                                <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.content}</span>
+                              </td>
+
+                            </tr>
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </td>
           <td>
             <span className="badge badge-default m-l-10 hidden-sm-down">{item.published ? "Public" : "Review"}</span>
@@ -130,9 +177,10 @@ const IndexNews = ({ posts }) => {
                         <table className="table table-hover m-b-0 c_list">
                           <thead>
                             <tr>
+                              <th>ID</th>
                               <th>Tiêu đề</th>
                               <th>Hình ảnh</th>
-                              <th>Mô tả</th>
+                              <th>Bình Luận</th>
                               <th>Trạng thái</th>
                               <th>Hành động</th>
                             </tr>
@@ -149,6 +197,8 @@ const IndexNews = ({ posts }) => {
             </div>
           </div>
         </div >
+
+
         {/* <!-- Javascript --> */}
         <ScriptHeader />
       </>

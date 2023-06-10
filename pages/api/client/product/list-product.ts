@@ -22,7 +22,8 @@ export default async function handle(req, res) {
         },
         orderBy: {
             createdAt: 'desc'
-        }
+        },
+        
     });
     res.json(result);
 }

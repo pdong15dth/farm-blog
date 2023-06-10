@@ -13,6 +13,8 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
 import parse from 'html-react-parser';
+import moment from 'moment'
+import Footer from '@/src/components/Footer'
 
 
 
@@ -22,11 +24,12 @@ export async function getServerSideProps(ctx: DocumentContext) {
   const res2 = await fetch(`${utils.baseURL}/api/client/news/popular-posts`)
   const newsDetail = await res.json()
   const popularPosts = await res2.json()
-  console.log(ctx.query)
+
   return {
     props: {
       newsDetail,
-      popularPosts
+      popularPosts,
+      id: ctx.query.id,
     },
   }
 }
@@ -34,37 +37,43 @@ export async function getServerSideProps(ctx: DocumentContext) {
 const Index = (props) => {
 
   const [isLoaded, setIsLoaded] = useState(false)
-  useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+  const [newsDetail, setNewsDetail] = useState(props.newsDetail)
+  const [error, setError] = useState("")
 
-  const RenderNewsList = () => {
+  const postFormComment = async (event) => {
+    console.log("comment")
+    event.preventDefault();
+    try {
+      var err = []
+      setIsLoaded(false)
 
-    return props.posts.map((item, index) => {
-
-      return <div className="col-lg-6" key={index}>
-        <div className="card single_post">
-          <div className="body">
-            <div className="img-post">
-              <img className="d-block img-fluid" src={item.image} alt="First slide" />
-            </div>
-            <h3><a href="blog-details.html">{item.title}</a></h3>
-            <p>{item.description}</p>
-          </div>
-          <div className="footer">
-            <div className="actions">
-              <a href="#" className="btn btn-outline-secondary">Xem thêm</a>
-            </div>
-            {/* <ul className="stats">
-              <li><a href="#">General</a></li>
-              <li><a href="#" className="icon-heart">28</a></li>
-              <li><a href="#" className="icon-bubbles">128</a></li>
-            </ul> */}
-          </div>
-        </div>
-      </div>
-    })
+      var data = {
+        fullName: event.target.fullName.value,
+        email: event.target.email.value,
+        content: event.target.content.value,
+        postId: props.id
+      }
+      console.log(data)
+      fetch("/api/client/comment/news-create", {
+        method: "POST",
+        body: JSON.stringify(data)
+      }).then(response => response.json()).then(async res => {
+        setError("Bình luận thành công")
+        if (res.code == 401) {
+          setError(res.message)
+          return
+        }
+        const resNews = await fetch(`${utils.baseURL}/api/client/news/getById?id=${props.id}`)
+        const newsDetail = await resNews.json()
+        setNewsDetail(newsDetail)
+        setIsLoaded(true)
+      }).catch(error => {
+      })
+    } catch (error) {
+      setIsLoaded(false)
+    }
   }
+
   return (
     <>
       <Head>
@@ -82,7 +91,10 @@ const Index = (props) => {
       {/* <!-- VENDOR CSS --> */}
       <CssHeader />
       <link rel="stylesheet" href="../../../assets/css/blog.css" />
-
+      <script dangerouslySetInnerHTML={{
+        __html: `<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v17.0&appId=734283891822484&autoLogAppEvents=1" nonce="F1RuyQrS"></script>
+`}}></script>
       {/* <!-- Page Loader --> */}
       {/* <div className="page-loader-wrapper">
         <div className="loader">
@@ -111,7 +123,7 @@ const Index = (props) => {
                       href="index.html"><i
                         className="icon-home"></i></a></li>
                     <li className="breadcrumb-item active">Tin tức</li>
-                    <li className="breadcrumb-item active">{props.newsDetail.title}</li>
+                    <li className="breadcrumb-item active">{newsDetail.title}</li>
                   </ul>
                 </div>
 
@@ -120,78 +132,70 @@ const Index = (props) => {
             <div className="row clearfix">
               <div className="col-lg-8 col-md-12 left-box">
                 <div className="card single_post">
-                  <div className="body">
+                  <div className="body client">
                     <div className="img-post">
-                      <img className="d-block img-fluid" src={props.newsDetail.image} alt="First slide" />
+                      <img className="d-block img-fluid" src={newsDetail.image} alt="First slide" />
                     </div>
-                    <h3><a href="blog-details.html">{props.newsDetail.title}</a></h3>
-                    <p>{props.newsDetail.description}</p>
+                    <h3><a href="blog-details.html">{newsDetail.title}</a></h3>
+                    <p>{newsDetail.description}</p>
                     <br />
-                    {parse(`${props.newsDetail.content}`)}
+                    {parse(`${newsDetail.content}`)}
                   </div>
                 </div>
+
                 <div className="card">
-                  <div className="header">
-                    <h2>Comments 3</h2>
-                  </div>
                   <div className="body">
-                    <ul className="comment-reply list-unstyled">
-                      <li className="row clearfix">
-                        <div className="icon-box col-md-2 col-4"><img className="img-fluid img-thumbnail" src="../../assets/images/sm/avatar2.jpg" alt="Awesome Image" /></div>
-                        <div className="text-box col-md-10 col-8 p-l-0 p-r0">
-                          <h5 className="m-b-0">Gigi Hadid </h5>
-                          <p>Why are there so many tutorials on how to decouple WordPress? how fast and easy it is to get it running (and keep it running!) and its massive ecosystem. </p>
-                          <ul className="list-inline">
-                            <li><a href="#">Mar 09 2018</a></li>
-                            <li><a href="#">Reply</a></li>
-                          </ul>
-                        </div>
-                      </li>
-                      <li className="row clearfix">
-                        <div className="icon-box col-md-2 col-4"><img className="img-fluid img-thumbnail" src="../../assets/images/sm/avatar3.jpg" alt="Awesome Image" /></div>
-                        <div className="text-box col-md-10 col-8 p-l-0 p-r0">
-                          <h5 className="m-b-0">Christian Louboutin</h5>
-                          <p>Great tutorial but few issues with it? If i try open post i get following errors. Please can you help me?</p>
-                          <ul className="list-inline">
-                            <li><a href="#">Mar 12 2018</a></li>
-                            <li><a href="#">Reply</a></li>
-                          </ul>
-                        </div>
-                      </li>
-                      <li className="row clearfix">
-                        <div className="icon-box col-md-2 col-4"><img className="img-fluid img-thumbnail" src="../../assets/images/sm/avatar4.jpg" alt="Awesome Image" /></div>
-                        <div className="text-box col-md-10 col-8 p-l-0 p-r0">
-                          <h5 className="m-b-0">Kendall Jenner</h5>
-                          <p>Very nice and informative article. In all the years I've done small and side-projects as a freelancer, I've ran into a few problems here and there.</p>
-                          <ul className="list-inline">
-                            <li><a href="#">Mar 20 2018</a></li>
-                            <li><a href="#">Reply</a></li>
-                          </ul>
-                        </div>
-                      </li>
+                    <ul className="nav nav-tabs-new2">
+                      <li className="nav-item"><a className="nav-link active" data-toggle="tab" href="#Home-new2">Bình Luận ({newsDetail.comments.length})</a></li>
                     </ul>
+                    <div className="tab-content" id='Home-new2'>
+                      <div className="tab-pane animated flipInX active"
+                        id="Home-new2">
+                        <ul className="comment-reply list-unstyled">
+                          {
+                            newsDetail.comments.map((item, index) => {
+                              return <li key={index} className="row clearfix">
+                                <div className="icon-box col-md-2 col-4"><img className="img-fluid img-thumbnail" src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-portrait-176256935.jpg" alt="Awesome Image" /></div>
+                                <div className="text-box col-md-10 col-8 p-l-0 p-r0">
+                                  <h5 className="m-b-0">{item.fullName}</h5>
+                                  <p>{item.content}</p>
+                                  <ul className="list-inline">
+                                    <li><a href="#">{moment(item.createdAt).format('MMMM Do YYYY')}</a></li>
+                                  </ul>
+                                </div>
+                              </li>
+                            })
+                          }
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="card">
                   <div className="header">
                     <h2>Để lại bình luận <small>Địa chỉ email của bạn sẽ không được công bố. Các trường bắt buộc được đánh dấu*</small></h2>
                   </div>
+                  {
+                    (isLoaded) ? <div className="body"><button type="button"
+                      className="btn btn-success btn-toastr col-lg-12"
+                      data-position="bottom-right">{error}</button></div> : <></>
+                  }
                   <div className="body">
                     <div className="comment-form">
-                      <form className="row clearfix">
+                      <form className="row clearfix" onSubmit={postFormComment}>
                         <div className="col-sm-6">
                           <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Họ và Tên" />
+                            <input type="text" className="form-control" id='fullName' required placeholder="Họ và Tên" />
                           </div>
                         </div>
                         <div className="col-sm-6">
                           <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Địa chỉ Email" />
+                            <input type="text" className="form-control" id='email' required placeholder="Địa chỉ Email" />
                           </div>
                         </div>
                         <div className="col-sm-12">
                           <div className="form-group">
-                            <textarea rows={4} className="form-control no-resize" placeholder="Vui lòng nhập nội dung bạn muốn..." ></textarea>
+                            <textarea rows={4} className="form-control no-resize" id='content' required placeholder="Vui lòng nhập nội dung bạn muốn..." ></textarea>
                           </div>
                           <button type="submit" className="btn btn-block btn-primary">Gửi</button>
                         </div>
@@ -247,11 +251,13 @@ const Index = (props) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div >
+          <Footer />
         </div>
       </div>
       {/* <!-- Javascript --> */}
-      <ScriptHeader />
+      < ScriptHeader />
+
     </>
   )
 

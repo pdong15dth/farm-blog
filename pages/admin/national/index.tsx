@@ -69,6 +69,9 @@ const IndexNational = ({ nationals }) => {
       return (
         <tr key={index}>
           <td>
+            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.id}</span>
+          </td>
+          <td>
             <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.name}</span>
           </td>
           <td>
@@ -122,7 +125,7 @@ const IndexNational = ({ nationals }) => {
       <div className="row">
         <div className="col-lg-6">
           <div className="form-group">
-            <label>Tiêu đề bài viết</label>
+            <label>Tên Tỉnh Thành / Quốc Gia</label>
             <input onChange={(event) => {
               console.log(event.target.value)
 
@@ -150,7 +153,7 @@ const IndexNational = ({ nationals }) => {
         <label>Khu vực</label>
         <br />
         <label className="fancy-radio">
-          <input type="radio" name="isCountry" value="1" required defaultChecked/>
+          <input type="radio" name="isCountry" value="1" required defaultChecked />
           <span><i></i>Trong nước</span>
         </label>
         <label className="fancy-radio">
@@ -222,6 +225,7 @@ const IndexNational = ({ nationals }) => {
                       <table className="table table-hover m-b-0 c_list">
                         <thead>
                           <tr>
+                            <th>ID</th>
                             <th>Tiêu đề</th>
                             <th>Slug</th>
                             <th>Hành động</th>

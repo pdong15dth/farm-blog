@@ -13,6 +13,7 @@ import ScriptHeader from '@/src/components/ScriptHeader'
 import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
 import { toast } from 'react-toastify'
+import Footer from '@/src/components/Footer'
 
 
 export async function getServerSideProps(ctx: DocumentContext) {
@@ -29,15 +30,6 @@ export async function getServerSideProps(ctx: DocumentContext) {
 
 const Home = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
-
-  const notify = useCallback((type, message) => {
-    toast(type, message);
-  }, []);
-
-  const dismiss = useCallback(() => {
-    toast.dismiss();
-  }, []);
-
 
   const [error, setError] = useState("")
 
@@ -209,6 +201,7 @@ const Home = (props) => {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       </div>
       {/* <!-- Javascript --> */}

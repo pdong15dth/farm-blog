@@ -7,7 +7,8 @@ export default async function handle(req, res) {
         },
         include: {
             finishProduct: true,
-            national: true
+            national: true,
+            comments: true
         }
     });
     res.json(result);

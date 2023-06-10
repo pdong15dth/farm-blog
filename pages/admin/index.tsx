@@ -10,10 +10,34 @@ import Script from 'next/script'
 import CssHeader from '@/src/components/CssHeader'
 import ScriptHeader from '@/src/components/ScriptHeader'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
+import utils from '@/src/utils/constant'
 
-const inter = Inter({ subsets: ['latin'] })
+export async function getStaticProps() {
+  const resProduct = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
+  const products = await resProduct.json()
+  const resFinishProduct = await fetch(`${utils.baseURL}/api/admin/finish-product/list-finish-product`)
+  const finishProduct = await resFinishProduct.json()
+  const resPosts = await fetch(`${utils.baseURL}/api/admin/news/list-news`)
+  const posts = await resPosts.json()
+  const resContacts = await fetch(`${utils.baseURL}/api/admin/contact`)
+  const contacts = await resContacts.json()
 
-const Home = () => {
+  const resNationals = await fetch(`${utils.baseURL}/api/admin/national/listNational`)
+
+  const nationals = await resNationals.json()
+
+  return {
+    props: {
+      products,
+      finishProduct,
+      posts,
+      contacts,
+      nationals
+    },
+  }
+}
+
+const Home = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   useEffect(() => {
     setIsLoaded(true)
@@ -60,7 +84,7 @@ const Home = () => {
                   <h2>Dashboard</h2>
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item"><a
-                      href="index.html"><i
+                      href="/admin"><i
                         className="icon-home"></i></a></li>
                     <li className="breadcrumb-item active">Dashboard
                     </li>
@@ -70,144 +94,65 @@ const Home = () => {
               </div>
             </div>
             <div className="row clearfix">
-              <div className="col-lg-12">
-                <div className="card">
-                  <div className="header">
-                    <h2>Lucid Activities</h2>
-                  </div>
-                  <div className="body">
-                    <div className="timeline-item green"
-                      date-is="20-04-2018 - Today">
-                      <h5>Hello, 'Im a single div responsive
-                        timeline without media Queries!</h5>
-                      <span><a href="#">Elisse
-                        Joson</a> San Francisco, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. I write
-                          the best placeholder text, and I'm
-                          the biggest developer on the web
-                          card she has is the Lorem card.</p>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample"
-                          aria-expanded="false"
-                          aria-controls="collapseExample"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample">
-                          <div className="well">
-                            <form>
-                              <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
-                              </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
-
-                    <div className="timeline-item blue"
-                      date-is="19-04-2018 - Yesterday">
-                      <h5>Oeehhh, that's awesome.. Me too!</h5>
-                      <span><a href="#"
-                        title="">Katherine Lumaad</a>
-                        Oakland, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. on the
-                          web by far... While that's mock-ups
-                          and this is politics, are they
-                          really so different? I think the
-                          only card she has is the Lorem card.
-                        </p>
-                        <div className="timeline_img m-b-20">
-                          <img className="w-25"
-                            src="assets/images/blog/blog-page-4.jpg"
-                            alt="Awesome Image" />
-                          <img className="w-25"
-                            src="assets/images/blog/blog-page-2.jpg"
-                            alt="Awesome Image" />
-                        </div>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample1"
-                          aria-expanded="false"
-                          aria-controls="collapseExample1"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample1">
-                          <div className="well">
-                            <form>
-                              <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
-                              </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="timeline-item warning"
-                      date-is="21-02-2018">
-                      <h5>An Engineer Explains Why You Should
-                        Always Order the Larger Pizza</h5>
-                      <span><a href="#"
-                        title="">Gary Camara</a> San
-                        Francisco, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. I write
-                          the best placeholder text, and I'm
-                          the biggest developer on the web by
-                          far... While that's mock-ups and
-                          this is politics, is the Lorem card.
-                        </p>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample2"
-                          aria-expanded="false"
-                          aria-controls="collapseExample2"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample2">
-                          <div className="well">
-                            <form>
-                              <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
-                              </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
-                          </div>
-                        </div>
+              <div className="col-lg-3 col-md-6 col-sm-6">
+                <a href="/admin/product">
+                  <div className="card text-center bg-info">
+                    <div className="body">
+                      <div className="p-15 text-light">
+                        <h3>{props.products.length}</h3>
+                        <span>Nông Sản</span>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-6">
+                <a href="/admin/finish-product">
+                  <div className="card text-center bg-secondary">
+                    <div className="body">
+                      <div className="p-15 text-light">
+                        <h3>{props.finishProduct.length}</h3>
+                        <span>Thành Phẩm</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-6">
+                <a href="/admin/news">
+                  <div className="card text-center bg-warning">
+                    <div className="body">
+                      <div className="p-15 text-light">
+                        <h3>{props.posts.length}</h3>
+                        <span>Tin Tức</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-6">
+                <a href="/admin/national">
+                  <div className="card text-center bg-primary">
+                    <div className="body">
+                      <div className="p-15 text-light">
+                        <h3>{props.nationals.length}</h3>
+                        <span>Tỉnh TP / Quốc Gia</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-6">
+                <a href="/admin/contact">
+                  <div className="card text-center bg-dark">
+                    <div className="body">
+                      <div className="p-15 text-light">
+                        <h3>{props.contacts.length}</h3>
+                        <span>Liên Hệ</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
           </div>

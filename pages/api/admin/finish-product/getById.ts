@@ -1,6 +1,7 @@
 import prisma from "@/src/services/basePrisma/BasePrisma";
 
 export default async function handle(req, res) {
+    console.log("Thanh Pham")
     const result = await prisma.finishProduct.findUnique({
         where: {
             id: parseInt(req.query.id)

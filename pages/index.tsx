@@ -10,14 +10,69 @@ import Script from 'next/script'
 import { url } from 'inspector'
 import CssHeader from '@/src/components/CssHeader'
 import ScriptHeader from '@/src/components/ScriptHeader'
+import { DocumentContext } from 'next/document'
+import utils from '@/src/utils/constant'
+import Footer from '@/src/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+export async function getServerSideProps(ctx: DocumentContext) {
+  console.log(ctx.query.tinh_tp)
+  const resNational = await fetch(`${utils.baseURL}/api/client/national`)
+  const nationals = await resNational.json()
+  const res = await fetch(`${utils.baseURL}/api/client/product/list-product?national=${ctx.query.tinh_tp}`)
+  const products = await res.json()
 
-const Home = () => {
+  const resNews = await fetch(`${utils.baseURL}/api/client/news/list-news-home`)
+  const news = await resNews.json()
+
+  const resFinistProducts = await fetch(`${utils.baseURL}/api/client/finish-product/list-finish-product`)
+  const finishProducts = await resFinistProducts.json()
+
+  return {
+    props: {
+      products,
+      nationals,
+      news,
+      finishProducts
+    },
+  }
+}
+const Home = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
-  useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+
+  const [error, setError] = useState("")
+
+  const postFormContact = async (event) => {
+    event.preventDefault();
+    try {
+      var err = []
+      setIsLoaded(false)
+
+      var data = {
+        firstName: event.target.firstName.value,
+        lastName: event.target.lastName.value,
+        phone: event.target.phone.value,
+        address: event.target.address.value,
+        message: event.target.message.value,
+      }
+
+      console.log(data)
+      fetch("/api/client/contact/create", {
+        method: "POST",
+        body: JSON.stringify(data)
+      }).then(response => response.json()).then(res => {
+        setError("Gửi liên hệ thành công")
+        if (res.code == 401) {
+          setError(res.message)
+          return
+        }
+        setIsLoaded(true)
+      }).catch(error => {
+      })
+    } catch (error) {
+      setIsLoaded(false)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -34,6 +89,7 @@ const Home = () => {
       </Head>
       {/* <!-- VENDOR CSS --> */}
       <CssHeader />
+      <link rel="stylesheet" href="../../assets/css/blog.css" />
 
       {/* <!-- Page Loader --> */}
       {/* <div className="page-loader-wrapper">
@@ -54,156 +110,174 @@ const Home = () => {
 
         <div id="main-content">
           <div className="container">
-            <div className="block-header">
-              <div className="row">
-                <div className="col-lg-5 col-md-8 col-sm-12">
-                  <h2>Dashboard</h2>
-                  <ul className="breadcrumb">
-                    <li className="breadcrumb-item"><a
-                      href="index.html"><i
-                        className="icon-home"></i></a></li>
-                    <li className="breadcrumb-item active">Dashboard
-                    </li>
-                  </ul>
-                </div>
-
-              </div>
-            </div>
             <div className="row clearfix">
-              <div className="col-lg-12">
+              <div className="col-lg-8">
+                <div className="card single_post">
+                  <div className="body">
+                    <div className="img-post">
+                      <img className="d-block img-fluid" src={props.news[0].image} alt="First slide" />
+                    </div>
+                    <h3><a href={`/tin-tuc/${props.news[0].slug}/${props.news[0].id}`}>{props.news[0].title}</a></h3>
+                    <p>{props.news[0].description}</p>
+                  </div>
+                  <div className="footer">
+                    <div className="actions">
+                      <a href={`/tin-tuc/${props.news[0].slug}/${props.news[0].id}`} className="btn btn-outline-secondary">Xem thêm</a>
+                    </div>
+                  </div>
+                </div>
                 <div className="card">
                   <div className="header">
-                    <h2>Lucid Activities</h2>
+                    <h2>Nông Sản</h2>
+                  </div>
+                  <div className="body row clearfix">
+                    {
+                      props.products.map((item, index) => {
+                        return <div key={index} className="col-lg-3">
+                          <div className="card">
+                            <a href={`/nong-san/${item.slug}/${item.id}`}>
+                              <div className="body text-center">
+                                <div className="chart easy-pie-chart-1" data-percent="75"> <span>
+                                  <img src={item.image} alt="user" className="rounded-circle" /></span> </div>
+                                <h6>{item.title}</h6>
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                      })
+                    }
+                  </div>
+                </div>
+                <div className="card">
+                  <div className="header">
+                    <h2>Thành Phẩm</h2>
                   </div>
                   <div className="body">
-                    <div className="timeline-item green"
-                      date-is="20-04-2018 - Today">
-                      <h5>Hello, 'Im a single div responsive
-                        timeline without media Queries!</h5>
-                      <span><a href="#">Elisse
-                        Joson</a> San Francisco, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. I write
-                          the best placeholder text, and I'm
-                          the biggest developer on the web
-                          card she has is the Lorem card.</p>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample"
-                          aria-expanded="false"
-                          aria-controls="collapseExample"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample">
-                          <div className="well">
-                            <form>
-                              <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
-                              </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
-                          </div>
-                        </div>
+                    <ul className="comment-reply list-unstyled">
+                      {
+                        props.finishProducts.map((item, index) => {
+                          return <li key={index} className="row clearfix">
+                            <div className="icon-box col-md-2 col-4"><img className="img-fluid img-thumbnail" src={item.image} alt="Awesome Image" /></div>
+                            <div className="text-box col-md-10 col-8 p-l-0 p-r0">
+                              <a href={`/thanh-pham/${item.slug}/${item.id}`}><h5 className="m-b-0">{item.title} - {item.national.name}</h5></a>
+                              <p>Sản lượng:
+                                {
 
+                                  JSON.parse(item.data).map((obj, index2) => {
+                                    const key = Object.keys(obj)[0];
+                                    const value = obj[key];
+                                    return <Fragment key={index2}> {key}: <strong>{value}</strong> (Tấn),</Fragment>;
+                                  })
+                                }
+                              </p>
+                              <ul className="list-inline">
+                                <li><a href={`/thanh-pham/${item.slug}/${item.id}`}>Xem chi tiết</a></li>
+                              </ul>
+                            </div>
+                          </li>
+                        })
+                      }
+                    </ul>
+                  </div>
+                </div>
+                <div className="card">
+                  <div className="header">
+                    <h2>Liên hệ với chúng tôi</h2>
+
+                  </div>
+                  <div className="body">
+                    <div className="card">
+
+                      <div className="header">
+                        <h2>Nhập thông tin liên hệ <small>Địa chỉ email của bạn sẽ không được công bố. Các trường bắt buộc được đánh dấu*</small></h2>
                       </div>
-                    </div>
 
-                    <div className="timeline-item blue"
-                      date-is="19-04-2018 - Yesterday">
-                      <h5>Oeehhh, that's awesome.. Me too!</h5>
-                      <span><a href="#"
-                        title="">Katherine Lumaad</a>
-                        Oakland, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. on the
-                          web by far... While that's mock-ups
-                          and this is politics, are they
-                          really so different? I think the
-                          only card she has is the Lorem card.
-                        </p>
-                        <div className="timeline_img m-b-20">
-                          <img className="w-25"
-                            src="assets/images/blog/blog-page-4.jpg"
-                            alt="Awesome Image" />
-                          <img className="w-25"
-                            src="assets/images/blog/blog-page-2.jpg"
-                            alt="Awesome Image" />
-                        </div>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample1"
-                          aria-expanded="false"
-                          aria-controls="collapseExample1"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample1">
-                          <div className="well">
-                            <form>
+                      {
+                        (isLoaded) ? <div className="body"><button type="button"
+                          className="btn btn-success btn-toastr col-lg-12"
+                          data-position="bottom-right">{error}</button></div> : <></>
+                      }
+
+                      <div className="body">
+                        <div className="comment-form">
+                          <form className="row clearfix" onSubmit={postFormContact}>
+                            <div className="col-sm-6">
                               <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
+                                <input type="text" className="form-control" id='firstName' placeholder="Họ" />
                               </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
-                          </div>
+                            </div>
+                            <div className="col-sm-6">
+                              <div className="form-group">
+                                <input type="text" className="form-control" id='lastName' placeholder="Tên" />
+                              </div>
+                            </div>
+                            <div className="col-sm-6">
+                              <div className="form-group">
+                                <input type="text" className="form-control" id='phone' placeholder="Số Điện Thoại" />
+                              </div>
+                            </div>
+                            <div className="col-sm-6">
+                              <div className="form-group">
+                                <input type="text" className="form-control" id='address' placeholder="Địa chỉ Email" />
+                              </div>
+                            </div>
+                            <div className="col-sm-12">
+                              <div className="form-group">
+                                <textarea rows={4} className="form-control no-resize" id='message' placeholder="Nội dung liên hệ"></textarea>
+                              </div>
+                              <button type="submit" className="btn btn-block btn-primary">Gửi</button>
+                            </div>
+                          </form>
                         </div>
                       </div>
                     </div>
-
-                    <div className="timeline-item warning"
-                      date-is="21-02-2018">
-                      <h5>An Engineer Explains Why You Should
-                        Always Order the Larger Pizza</h5>
-                      <span><a href="#"
-                        title="">Gary Camara</a> San
-                        Francisco, CA</span>
-                      <div className="msg">
-                        <p>I'm speaking with myself, number one,
-                          because I have a very good brain and
-                          I've said a lot of things. I write
-                          the best placeholder text, and I'm
-                          the biggest developer on the web by
-                          far... While that's mock-ups and
-                          this is politics, is the Lorem card.
-                        </p>
-                        <a href="#"
-                          className="m-r-20"><i
-                            className="icon-heart"></i> Like</a>
-                        <a role="button" data-toggle="collapse"
-                          href="#collapseExample2"
-                          aria-expanded="false"
-                          aria-controls="collapseExample2"><i
-                            className="icon-bubbles"></i>
-                          Comment</a>
-                        <div className="collapse animated fadeInDown m-t-10"
-                          id="collapseExample2">
-                          <div className="well">
-                            <form>
-                              <div className="form-group">
-                                <textarea rows={2}
-                                  className="form-control no-resize"
-                                  placeholder="Enter here for tweet..."></textarea>
-                              </div>
-                              <button
-                                className="btn btn-primary">Submit</button>
-                            </form>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4 right-box">
+                {
+                  props.news.map((item, index) => {
+                    if (item.id != props.news[0].id) {
+                      return <div key={index} className="card single_post">
+                        <div className="body">
+                          <div className="img-post">
+                            <img className="d-block img-fluid" src={item.image} alt="First slide" />
+                          </div>
+                          <h3><a href={`/tin-tuc/${item.slug}/${item.id}`}>{item.title}</a></h3>
+                        </div>
+                        <div className="footer">
+                          <div className="actions">
+                            <a href={`/tin-tuc/${item.slug}/${item.id}`} className="btn btn-outline-secondary">Xem thêm</a>
                           </div>
                         </div>
+                      </div>
+                    }
+                  })
+                }
+                <div className="card">
+                  <div className="header">
+                    <h2>Tỉnh Thành Phố / Quốc Gia</h2>
+                  </div>
+                  <div className="body widget">
+                    <ul className="list-unstyled categories-clouds m-b-0">
+                      <li><a href={`/nong-san`}>Tất cả</a></li>
+                      {
+                        props.nationals.map((item, index) => {
+                          return <li style={{ padding: 4 }} key={index}><a href={`/nong-san?tinh_tp=${item.slug}`}>{item.name}</a></li>
+                        })
+                      }
+                    </ul>
+                  </div>
+                </div>
+                <div className="card">
+                  <div className="header">
+                    <h2>Nhận thông báo các bài viết mới nhất qua Email</h2>
+                  </div>
+                  <div className="body widget newsletter">
+                    <div className="input-group">
+                      <input type="text" className="form-control" placeholder="Nhập Email" />
+                      <div className="input-group-append">
+                        <span className="input-group-text"><i className="icon-paper-plane"></i></span>
                       </div>
                     </div>
                   </div>
@@ -211,10 +285,13 @@ const Home = () => {
               </div>
             </div>
           </div>
+        <Footer />
         </div>
+
       </div>
+
       {/* <!-- Javascript --> */}
-      <ScriptHeader />  
+      <ScriptHeader />
     </>
   )
 

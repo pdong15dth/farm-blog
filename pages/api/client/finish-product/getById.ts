@@ -8,10 +8,13 @@ const prisma = new PrismaClient()
 // Optional fields in body: content
 export default async function handle(req, res) {
 
-    console.log(req.query.id)
+    console.log("req.query.id", req.query.id)
     const result = await prisma.finishProduct.findUnique({
         where: {
             id: parseInt(req.query.id),
+        },
+        include: {
+            comments: true
         }
     }).catch(error => {
         res.json({

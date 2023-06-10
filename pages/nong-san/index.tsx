@@ -12,6 +12,7 @@ import ScriptHeader from '@/src/components/ScriptHeader'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import utils from '@/src/utils/constant'
 import { DocumentContext } from 'next/document'
+import Footer from '@/src/components/Footer'
 
 export async function getServerSideProps(ctx: DocumentContext) {
   console.log(ctx.query.tinh_tp)
@@ -166,6 +167,7 @@ const Home = (props) => {
                 </div>
               </div>
             </div>
+            <Footer />
           </div>
         </div>
         {/* <!-- Javascript --> */}

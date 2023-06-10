@@ -11,6 +11,7 @@ import CssHeader from '@/src/components/CssHeader'
 import ScriptHeader from '@/src/components/ScriptHeader'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import utils from '@/src/utils/constant'
+import Footer from '@/src/components/Footer'
 
 
 export async function getStaticProps() {
@@ -122,6 +123,7 @@ const Home = (props) => {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       </div>
       {/* <!-- Javascript --> */}

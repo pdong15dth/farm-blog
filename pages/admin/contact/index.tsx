@@ -48,13 +48,14 @@ const Index = ({ contacts }) => {
   const removeItem = (id) => {
     console.log(id)
     var body = { id }
-    fetch(`${utils.baseURL}/api/admin/contact/delete`, {
+    fetch(`${utils.baseURL}/api/admin/contact/update`, {
       method: "POST",
       body: JSON.stringify(body)
-    }).then(response => response.json()).then(result => {
+    }).then(response => response.json()).then(async result => {
       console.log(result)
-      const newList = contactsData.filter((item) => item.id !== id);
-      setContacts(newList);
+      const res = await fetch(`${utils.baseURL}/api/admin/contact`)
+      const contacts = await res.json()
+      setContacts(contacts);
     }).catch(error => console.log('error', error));
   }
 
@@ -68,6 +69,9 @@ const Index = ({ contacts }) => {
       return (
         <tr key={index}>
           <td>
+            <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.id}</span>
+          </td>
+          <td>
             <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.firstName} {item.lastName}</span>
           </td>
           <td>
@@ -78,6 +82,12 @@ const Index = ({ contacts }) => {
           </td>
           <td>
             <span className="phone"><i className="zmdi zmdi-phone m-r-10"></i>{item.message}</span>
+          </td>
+          <td>
+            <span className={`badge badge-${!item.isActive ? "dark" : "success"} m-l-10 hidden-sm-down`}>{!item.isActive ? "Chưa liên hệ" : "Đã liên hệ"}</span>
+          </td>
+          <td>
+            <button type="button" data-type="confirm" className="btn btn-success js-sweetalert" title="Delete" onClick={() => removeItem(item.id)}><i className="fa fa-check"></i></button>
           </td>
         </tr>
       )
@@ -139,10 +149,13 @@ const Index = ({ contacts }) => {
                       <table className="table table-hover m-b-0 c_list">
                         <thead>
                           <tr>
+                            <th>ID</th>
                             <th>Họ và Tên</th>
                             <th>Địa Chỉ</th>
                             <th>Số Điện Thoại</th>
                             <th>Tin Nhắn</th>
+                            <th>Trạng thái</th>
+                            <th>Hành Động</th>
                           </tr>
                         </thead>
                         <tbody>

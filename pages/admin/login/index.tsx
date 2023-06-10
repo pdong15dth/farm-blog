@@ -134,29 +134,25 @@ const Home = () => {
               </div>
               <div className="card">
                 <div className="header">
-                  <p className="lead">Login to your account</p>
+                  <p className="lead">Đăng nhập vào trang quản lý</p>
                 </div>
                 <div className="body">
                   <form className="form-auth-small" onSubmit={login}>
                     <div className="form-group">
                       <label htmlFor="email" className="control-label sr-only">Email</label>
-                      <input type="email" className="form-control" id="email" name="email" placeholder="Email" />
+                      <input type="email" className="form-control" id="email" name="email" placeholder="Tài Khoản" />
                     </div>
                     <div className="form-group">
                       <label htmlFor="password" className="control-label sr-only">Password</label>
-                      <input type="password" className="form-control" id="password" name="password" placeholder="Password" />
+                      <input type="password" className="form-control" id="password" name="password" placeholder="Mật Khẩu" />
                     </div>
                     <div className="form-group clearfix">
                       <label className="fancy-checkbox element-left">
                         <input type="checkbox" />
-                        <span>Remember me</span>
+                        <span>Lưu đăng nhập</span>
                       </label>
                     </div>
-                    <button type="submit" className="btn btn-primary btn-lg btn-block">LOGIN</button>
-                    <div className="bottom">
-                      <span className="helper-text m-b-10"><i className="fa fa-lock"></i> <a href="page-forgot-password.html">Forgot password?</a></span>
-                      <span>Don't have an account? <a href="page-register.html">Register</a></span>
-                    </div>
+                    <button type="submit" className="btn btn-primary btn-lg btn-block">Đăng Nhập</button>
                   </form>
                 </div>
               </div>

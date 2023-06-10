@@ -12,6 +12,9 @@ export default async function handle(req, res) {
     const result = await prisma.post.findUnique({
         where: {
             id: parseInt(req.query.id),
+        },
+        include: {
+            comments: true
         }
     }).catch(error => {
         res.json({

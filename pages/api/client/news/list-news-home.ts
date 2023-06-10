@@ -11,6 +11,7 @@ export default async function handle(req, res) {
         orderBy: {
             createdAt: 'desc'
         },
+        take: 3
     });
     res.json(result);
 }

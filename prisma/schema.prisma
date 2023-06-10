@@ -43,23 +43,25 @@ model Product {
   data          String?
   createdAt     DateTime        @default(now())
   finishProduct FinishProduct[]
+  comments      Comment[]
 }
 
 model FinishProduct {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   title        String
   description  String?
   content      String?
   slug         String?
   slugOriginal String?
   image        String?
-  published    Boolean  @default(false)
+  published    Boolean   @default(false)
   data         String?
-  national     National @relation(fields: [nationalId], references: [id])
+  national     National  @relation(fields: [nationalId], references: [id])
   nationalId   Int
-  product      Product  @relation(fields: [productId], references: [id])
+  product      Product   @relation(fields: [productId], references: [id])
   productId    Int
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
+  comments     Comment[]
 }
 
 model Post {
@@ -78,12 +80,17 @@ model Post {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  fullName  String
-  content   String
-  createdAt DateTime @default(now())
-  Post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?
+  id              Int            @id @default(autoincrement())
+  fullName        String
+  content         String
+  email           String?
+  createdAt       DateTime       @default(now())
+  post            Post?          @relation(fields: [postId], references: [id])
+  postId          Int?
+  finishProduct   FinishProduct? @relation(fields: [finishProductId], references: [id])
+  finishProductId Int?
+  product         Product?       @relation(fields: [productId], references: [id])
+  productId       Int?
 }
 
 model Contact {
@@ -93,5 +100,6 @@ model Contact {
   address   String
   phone     String
   message   String
+  isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
 }

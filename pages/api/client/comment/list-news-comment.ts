@@ -4,13 +4,12 @@ import CryptoJS from 'crypto-js'
 const prisma = new PrismaClient()
 // POST /api/get-accounts
 export default async function handle(req, res) {
-    const result = await prisma.post.findMany({
-        where: {
-            published: true
-        },
-        orderBy: {
-            createdAt: 'desc'
-        },
+    console.log(req.query.id)
+    const result = await prisma.comment.findMany({
+       where: {
+        postId: req.query.id
+       }
     });
+    console.log(result)
     res.json(result);
 }
