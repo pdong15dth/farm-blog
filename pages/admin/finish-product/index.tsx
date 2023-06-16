@@ -16,7 +16,7 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import HeaderTitle from '@/src/components/HeaderTitle'
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch(`${utils.baseURL}/api/admin/finish-product/list-finish-product`)
   const res1 = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
   console.log(res)

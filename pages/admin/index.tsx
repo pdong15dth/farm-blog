@@ -1,18 +1,14 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Header from '@/src/components/Header'
-import SideNav from '@/src/components/SideNav'
-import Script from 'next/script'
 import CssHeader from '@/src/components/CssHeader'
 import ScriptHeader from '@/src/components/ScriptHeader'
 import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import utils from '@/src/utils/constant'
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const resProduct = await fetch(`${utils.baseURL}/api/admin/product/list-product`)
   const products = await resProduct.json()
   const resFinishProduct = await fetch(`${utils.baseURL}/api/admin/finish-product/list-finish-product`)
@@ -42,6 +38,7 @@ const Home = (props) => {
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
   return (
     <>
       <Head>

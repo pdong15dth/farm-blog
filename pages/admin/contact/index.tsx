@@ -1,12 +1,7 @@
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Header from '@/src/components/Header'
-import SideNav from '@/src/components/SideNav'
-import Script from 'next/script'
 import CssHeader from '@/src/components/CssHeader'
 import ScriptHeader from '@/src/components/ScriptHeader'
 import utils from '@/src/utils/constant'
@@ -16,7 +11,7 @@ import AdminSideNav from '@/src/components/admin/AdminSideNav'
 import HeaderTitle from '@/src/components/HeaderTitle'
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch(`${utils.baseURL}/api/admin/contact`)
 
   const contacts = await res.json()
@@ -28,17 +23,8 @@ export async function getStaticProps() {
 }
 const Index = ({ contacts }) => {
   const [contactsData, setContacts] = useState(contacts)
-  const [loadPageState, setLoadPageState] = useState(false)
-  const [error, setError] = useState("")
-
-  const reloadCountry = async () => {
-    const res = await fetch(`/api/admin/contact`)
-    const countrys = await res.json()
-    setContacts(countrys)
-  }
 
   useEffect(() => {
-    setLoadPageState(true)
     const isAdmin = authService.checkAuthAdmin();
     if (!isAdmin) {
       router.push("/admin/login");

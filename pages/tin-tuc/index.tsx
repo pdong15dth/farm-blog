@@ -14,7 +14,7 @@ import utils from '@/src/utils/constant'
 import Footer from '@/src/components/Footer'
 
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch(`${utils.baseURL}/api/client/news/list-news`)
   const posts = await res.json()
   return {
