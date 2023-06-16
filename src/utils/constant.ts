@@ -1,6 +1,6 @@
 class Utils {
   constructor() { }
-  baseURL: string = "http://0.0.0.0:3000";
+  baseURL: string = "https://farm-blog-six.vercel.app";
   amoutList = [
     {
       id: 1,
